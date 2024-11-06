@@ -1,8 +1,4 @@
-.. _code_of_conduct:
-
-================================================================================
-Code of Conduct
-================================================================================
+# Code of Conduct
 
 This code of conduct governs how we behave in any CoastalME forum or event and
 whenever we will be judged by our actions. We expect it to be honored by everyone
