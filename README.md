@@ -27,8 +27,8 @@ The software is written in C++ following the object oriented paradigm and has be
 The C++ source code is available for [download](https://github.com/apayo/CoastalME) under [GNU](https://github.com/apayo/CoastalME/tree/master?tab=GPL-3.0-1-ov-file) open source license.
 
 * Main site: https://www.osgeo.org/projects/coastalme/ - Developer docs, links to other resources
-* Main site: https://earthwise.bgs.ac.uk/index.php/Category:Coastal_Modeling_Environment - User docs, links to other resources
-* GIT repository: https://github.com/apayo/CoastalME
+* Wiki site: https://earthwise.bgs.ac.uk/index.php/Category:Coastal_Modeling_Environment - User docs, links to other resources
+* GIT repository: https://github.com/apayo/CoastalME - Master code
 * Bug tracker: https://github.com/apayo/CoastalME/issues
 * Mailing list: https://lists.osgeo.org/mailman/listinfo/coastalme-dev (not available yet)
 
