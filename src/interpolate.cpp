@@ -46,11 +46,10 @@ double dGetInterpolatedValue(vector<double> const* pVdXdata, vector<double> cons
       while (dX > pVdXdata->at(i+1)) i++;
    }
    
-   double 
-      dXL = pVdXdata->at(i),
-      dYL = pVdYdata->at(i),
-      dXR = pVdXdata->at(i+1),
-      dYR = pVdYdata->at(i+1);                  // Points on either side (unless beyond ends)
+   double dXL = pVdXdata->at(i);
+   double dYL = pVdYdata->at(i);
+   double dXR = pVdXdata->at(i+1);
+   double dYR = pVdYdata->at(i+1);                  // Points on either side (unless beyond ends)
       
    if (! bExtrapolate)                          // If beyond ends of array and not extrapolating
    {
@@ -81,13 +80,11 @@ double dGetInterpolatedValue(vector<int> const* pVnXdata, vector<double> const* 
       while (nX > pVnXdata->at(i+1)) i++;
    }
    
-   int 
-      nXL = pVnXdata->at(i),
-      nXR = pVnXdata->at(i+1);
+   int nXL = pVnXdata->at(i);
+   int nXR = pVnXdata->at(i+1);
       
-   double 
-      dYL = pVdYdata->at(i),
-      dYR = pVdYdata->at(i+1);                  // Points on either side (unless beyond ends)
+   double dYL = pVdYdata->at(i);
+   double dYR = pVdYdata->at(i+1);                  // Points on either side (unless beyond ends)
       
    if (! bExtrapolate)                          // If beyond ends of array and not extrapolating
    {

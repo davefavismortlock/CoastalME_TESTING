@@ -326,7 +326,7 @@ bool CSimulation::bReadRunDataFile(void)
 
             m_nLogFileDetail = stoi(strRH);
 
-            if ((m_nLogFileDetail < NO_LOG_FILE) || (m_nLogFileDetail > LOG_FILE_HIGH_DETAIL))
+            if ((m_nLogFileDetail < NO_LOG_FILE) || (m_nLogFileDetail > LOG_FILE_ALL))
                strErr = "line " + to_string(nLine) + ": log file detail level";
             break;
 
@@ -1076,9 +1076,9 @@ bool CSimulation::bReadRunDataFile(void)
             // Raster GIS output format (note must retain original case). Blank means use same format as input DEM file (if possible)
             m_strRasterGISOutFormat = strTrimLeft(&strRH);
                                     
-            // TODO 040 Remove this when GDAL supports raster overwrite for Geopackage. It also is the case that "GeoPackage rasters only support Byte data type" according to https://gdal.org/drivers/raster/gpkg.html
+            // TODO 065 Remove this when GDAL gpkg output is working correctly
             if (strRH.find("gpkg") != string::npos)
-               strErr = "GDAL does not (yet) support overwrite of raster Geopackage files. Please choose another output format.";
+               strErr = "GDAL gpkg create() gives floating-point exception. Please choose another output format.";
 
             break;
 
@@ -2162,7 +2162,7 @@ bool CSimulation::bReadRunDataFile(void)
             break;
 
          case 43:
-            // R (coast platform resistance to erosion) values along profile, see Walkden & Hall, 2011
+            // If simulating coast platform erosion, R (coast platform resistance to erosion) values along profile, see Walkden & Hall, 2011
             if (m_bDoShorePlatformErosion)
             {
                // First check that this is a valid double
@@ -2189,7 +2189,7 @@ bool CSimulation::bReadRunDataFile(void)
             break;
 
          case 45:
-            // Beach sediment transport at grid edges [0 = closed, 1 = open, 2 = re-circulate]
+            // If simulating beach sediment transport, beach sediment transport at grid edges [0 = closed, 1 = open, 2 = re-circulate]
             if (m_bDoBeachSedimentTransport)
             {
                if (! bIsStringValidInt(strRH))
@@ -2206,7 +2206,7 @@ bool CSimulation::bReadRunDataFile(void)
             break;
 
          case 46:
-            // Beach erosion/deposition equation [0 = CERC, 1 = Kamphuis]
+            // If simulating beach sediment transport, beach erosion/deposition equation [0 = CERC, 1 = Kamphuis]
             if (m_bDoBeachSedimentTransport)
             {
                if (! bIsStringValidInt(strRH))
@@ -2223,66 +2223,57 @@ bool CSimulation::bReadRunDataFile(void)
             break;
 
          case 47:
-            // Median size of fine sediment (mm) [0 = default, only for Kamphuis eqn]
-            if (m_bDoBeachSedimentTransport)
+            // Median size of fine sediment (mm), always needed [0 = default, only for Kamphuis eqn]. First check that this is a valid double
+            if (! bIsStringValidDouble(strRH))
             {
-               // First check that this is a valid double
-               if (! bIsStringValidDouble(strRH))
-               {
-                  strErr = "line " + to_string(nLine) + ": invalid floating point number for median particle size of fine sediment '" + strRH + "' in " + m_strDataPathName;
-                  break;
-               }
-
-               m_dD50Fine = strtod(strRH.c_str(), NULL);
-
-               if (m_dD50Fine < 0)
-                  strErr = "line " + to_string(nLine) + ": median particle size of fine sediment must be > 0";
-               else if (bFPIsEqual(m_dD50Fine, 0.0, TOLERANCE))
-                  // Use default value
-                  m_dD50Fine = D50_FINE_DEFAULT;
+               strErr = "line " + to_string(nLine) + ": invalid floating point number for median particle size of fine sediment '" + strRH + "' in " + m_strDataPathName;
+               break;
             }
+
+            m_dD50Fine = strtod(strRH.c_str(), NULL);
+
+            if (m_dD50Fine < 0)
+               strErr = "line " + to_string(nLine) + ": median particle size of fine sediment must be > 0";
+            else if (bFPIsEqual(m_dD50Fine, 0.0, TOLERANCE))
+               // Use default value
+               m_dD50Fine = D50_FINE_DEFAULT;
+
             break;
 
          case 48:
-            // Median size of sand sediment (mm) [0 = default, only for Kamphuis eqn]
-            if (m_bDoBeachSedimentTransport)
+            // Median size of sand sediment (mm), always needed [0 = default, only for Kamphuis eqn]. First check that this is a valid double
+            if (! bIsStringValidDouble(strRH))
             {
-               // First check that this is a valid double
-               if (! bIsStringValidDouble(strRH))
-               {
-                  strErr = "line " + to_string(nLine) + ": invalid floating point number for median particle size of sand sediment '" + strRH + "' in " + m_strDataPathName;
-                  break;
-               }
-
-               m_dD50Sand = strtod(strRH.c_str(), NULL);
-
-               if (m_dD50Sand < 0)
-                  strErr = "line " + to_string(nLine) + ": median particle size of sand sediment must be > 0";
-               else if (bFPIsEqual(m_dD50Sand, 0.0, TOLERANCE))
-                  // Use default value
-                  m_dD50Sand = D50_SAND_DEFAULT;
+               strErr = "line " + to_string(nLine) + ": invalid floating point number for median particle size of sand sediment '" + strRH + "' in " + m_strDataPathName;
+               break;
             }
+
+            m_dD50Sand = strtod(strRH.c_str(), NULL);
+
+            if (m_dD50Sand < 0)
+               strErr = "line " + to_string(nLine) + ": median particle size of sand sediment must be > 0";
+            else if (bFPIsEqual(m_dD50Sand, 0.0, TOLERANCE))
+               // Use default value
+               m_dD50Sand = D50_SAND_DEFAULT;
+
             break;
 
          case 49:
-            // Median size of coarse sediment (mm) [0 = default, only for Kamphuis eqn]
-            if (m_bDoBeachSedimentTransport)
+            // Median size of coarse sediment (mm), always needed [0 = default, only for Kamphuis eqn]. First check that this is a valid double
+            if (! bIsStringValidDouble(strRH))
             {
-               // First check that this is a valid double
-               if (! bIsStringValidDouble(strRH))
-               {
-                  strErr = "line " + to_string(nLine) + ": invalid floating point number for median particle size of coarse sediment '" + strRH + "' in " + m_strDataPathName;
-                  break;
-               }
-
-               m_dD50Coarse = strtod(strRH.c_str(), NULL);
-
-               if (m_dD50Coarse < 0)
-                  strErr = "line " + to_string(nLine) + ": median particle size of coarse sediment must be > 0";
-               else if (bFPIsEqual(m_dD50Coarse, 0.0, TOLERANCE))
-                  // Use default value
-                  m_dD50Coarse = D50_COARSE_DEFAULT;
+               strErr = "line " + to_string(nLine) + ": invalid floating point number for median particle size of coarse sediment '" + strRH + "' in " + m_strDataPathName;
+               break;
             }
+
+            m_dD50Coarse = strtod(strRH.c_str(), NULL);
+
+            if (m_dD50Coarse < 0)
+               strErr = "line " + to_string(nLine) + ": median particle size of coarse sediment must be > 0";
+            else if (bFPIsEqual(m_dD50Coarse, 0.0, TOLERANCE))
+               // Use default value
+               m_dD50Coarse = D50_COARSE_DEFAULT;
+
             break;
 
          case 50:
@@ -2322,63 +2313,54 @@ bool CSimulation::bReadRunDataFile(void)
             break;
 
          case 52:
-            // Relative erodibility (0 - 1) of fine-sized sediment
-            if (m_bDoBeachSedimentTransport)
+            // Relative erodibility (0 - 1) of fine-sized sediment, always needed. First check that this is a valid double
+            if (! bIsStringValidDouble(strRH))
             {
-               // First check that this is a valid double
-               if (! bIsStringValidDouble(strRH))
-               {
-                  strErr = "line " + to_string(nLine) + ": invalid floating point number for erodibility of fine-sized sediment '" + strRH + "' in " + m_strDataPathName;
-                  break;
-               }
-
-               m_dFineErodibility = strtod(strRH.c_str(), NULL);
-
-               if ((m_dFineErodibility < 0) || (m_dFineErodibility > 1))
-                  strErr = "line " + to_string(nLine) + ": relative erodibility of fine-sized sediment must be between 0 and 1";
+               strErr = "line " + to_string(nLine) + ": invalid floating point number for erodibility of fine-sized sediment '" + strRH + "' in " + m_strDataPathName;
+               break;
             }
+
+            m_dFineErodibility = strtod(strRH.c_str(), NULL);
+
+            if ((m_dFineErodibility < 0) || (m_dFineErodibility > 1))
+               strErr = "line " + to_string(nLine) + ": relative erodibility of fine-sized sediment must be between 0 and 1";
+
             break;
 
          case 53:
-            // Relative erodibility (0 - 1) of sand-sized sediment
-            if (m_bDoBeachSedimentTransport)
+            // Relative erodibility (0 - 1) of sand-sized sediment, always needed. First check that this is a valid double
+            if (! bIsStringValidDouble(strRH))
             {
-               // First check that this is a valid double
-               if (! bIsStringValidDouble(strRH))
-               {
-                  strErr = "line " + to_string(nLine) + ": invalid floating point number for erodibility of sand-sized sediment '" + strRH + "' in " + m_strDataPathName;
-                  break;
-               }
-
-               m_dSandErodibility = strtod(strRH.c_str(), NULL);
-
-               if ((m_dSandErodibility < 0) || (m_dSandErodibility > 1))
-                  strErr = "line " + to_string(nLine) + ": relative erodibility of sand-sized sediment must be between 0 and 1";
+               strErr = "line " + to_string(nLine) + ": invalid floating point number for erodibility of sand-sized sediment '" + strRH + "' in " + m_strDataPathName;
+               break;
             }
+
+            m_dSandErodibility = strtod(strRH.c_str(), NULL);
+
+            if ((m_dSandErodibility < 0) || (m_dSandErodibility > 1))
+               strErr = "line " + to_string(nLine) + ": relative erodibility of sand-sized sediment must be between 0 and 1";
+
             break;
 
          case 54:
-            // Relative erodibility (0 - 1) of coarse-sized sediment
-            if (m_bDoBeachSedimentTransport)
+            // Relative erodibility (0 - 1) of coarse-sized sediment, always needed. First check that this is a valid double
+            if (! bIsStringValidDouble(strRH))
             {
-               // First check that this is a valid double
-               if (! bIsStringValidDouble(strRH))
-               {
-                  strErr = "line " + to_string(nLine) + ": invalid floating point number for erodibility of coarse-sized sediment '" + strRH + "' in " + m_strDataPathName;
-                  break;
-               }
-
-               m_dCoarseErodibility = strtod(strRH.c_str(), NULL);
-
-               if ((m_dCoarseErodibility < 0) || (m_dCoarseErodibility > 1))
-               {
-                  strErr = "line " + to_string(nLine) + ": relative erodibility of coarse-sized sediment must be between 0 and 1";
-                  break;
-               }
-
-               if ((m_dFineErodibility + m_dSandErodibility + m_dCoarseErodibility) <= 0)
-                  strErr = "line " + to_string(nLine) + ": must have at least one non-zero erodibility value";
+               strErr = "line " + to_string(nLine) + ": invalid floating point number for erodibility of coarse-sized sediment '" + strRH + "' in " + m_strDataPathName;
+               break;
             }
+
+            m_dCoarseErodibility = strtod(strRH.c_str(), NULL);
+
+            if ((m_dCoarseErodibility < 0) || (m_dCoarseErodibility > 1))
+            {
+               strErr = "line " + to_string(nLine) + ": relative erodibility of coarse-sized sediment must be between 0 and 1";
+               break;
+            }
+
+            if ((m_dFineErodibility + m_dSandErodibility + m_dCoarseErodibility) <= 0)
+               strErr = "line " + to_string(nLine) + ": must have at least one non-zero erodibility value";
+
             break;
 
          case 55:

@@ -55,7 +55,6 @@ By Blake Morrison (2018). See <a href="https://www.penguin.co.uk/books/419911/sh
    USER INPUT
    TODO should user input be split in two main files: one for frequently-changed things, one for rarely-changed things? If so, what should go into each file ('testing only' OK, but what else?
 
-   TODO 003 Make coastline curvature moving window size a user input *** FIXED in 1.1.22
    TODO 011 Should this constant be a user input?
    TODO 036 Read in changed deep water wave values
    TODO 030 Do we also need to be able to input landform sub-categories?
@@ -69,6 +68,8 @@ By Blake Morrison (2018). See <a href="https://www.penguin.co.uk/books/419911/sh
    TODO 049 Handle other command line parameters e.g. path to .ini file, path to datafile
    TODO 035 Also handle other EPSG for vector spatial reference systems
    TODO 054 Choose more files to omit from "usual" raster output
+   TODO 069 Enable ability to represent intervention structures which have their foundation embedded in consolidated sediment. In other words, with the elevation of the base of the intervention structure *below* the top of all consolidated sediment layers. Will need some sanity checking of elevations
+   TODO 071 If the user input file format is changed, write a Python script to convert from the old file format to the new
 
    ERROR HANDLING
    TODO 004 Improve error handling of situation where we have a valid shadow zone but cannot find a neighbouring cell which is 'under' the coastline
@@ -99,27 +100,37 @@ By Blake Morrison (2018). See <a href="https://www.penguin.co.uk/books/419911/sh
    TODO 024 Should we calculate platform erosion on a profile that has hit dry land?
    TODO 037 Need more info on nFindIndex()
    TODO 039 Rewrite reading of multiple random number seeds
-   TODO 040 Remove this when GDAL supports raster overwrite for Geopackage
    TODO 044 Estuaries :-)
-   TODO 046 Why is cliff collapse eroded during deposition (three size classes) no longer calculated?
    TODO 050 Update for recent versions of Windows
    TODO 051 Implement other ways of calculating depth of closure, see TODO 045
    TODO 056 Check this please Andres
    TODO 057 Check this please Manuel
-   TODO 058 Dave to check this
    TODO 059 Implement dune landform class
    TODO 060 Remove 'magic numbers' from code here
    TODO 061 Is this safety check to depth of breaking a reasonable thing to do?
+   TODO 066 Should this be for all layers? Check
+   TODO 067 Is this ever non-zero? Check
+   TODO 070 Change CShore to use allocatable arrays (https://fortran-lang.org/en/learn/best_practices/allocatable_arrays/) so that profiles can have more than 500 points; make length of profile a user input?
 
    OUTPUT
+   TODO 065 Get GPKG output working: currently get floating point exception on pDriver->Create(). Also seems not to support raster overwrite. Will need to convert float to byte RGBA, see e.g. https://www.gamedev.net/forums/topic/486847-encoding-16-and-32-bit-floating-point-value-into-rgba-byte-texture/ And what about gpkg input?
+   TODO 063 Add NetCDF support, see https://trac.osgeo.org/gdal/wiki/NetCDF
+   TODO 064 Add support for grids that are not oriented N-S and W-E, but are still rectangular (will need to add a transformation in the reading and writing process, the first to bring it to the local base and the second to save it in global coordinates)
    TODO 031 Get raster slice output working with multiple slices
    TODO 032 Improve output scaling for DBL_NODATA situation
-   TODO 033 Also consider other vector output file formats
-   TODO 034 Also consider other raster output file formats
+   TODO 033 Also test and configure (e.g. by passing open() options) other vector output file formats
+   TODO 034 Also test and configure (e.g. by passing open() options) other raster output file formats
    TODO 043 When outputting profiles, how do we deal with randomness of profile spacing (since profile location is determined by curvature)?
    TODO 052 Improve saving of profiles and parallel profiles
+   TODO 062 Show end-of-iteration number of cells with sediment somewhere
+   TODO 068 Only show output in log file that is relevant to processes being simulated
 
-   061 is max
+   071 is max
+
+   COMPLETED
+   TODO 003 Make coastline curvature moving window size a user input FIXED in 1.1.22
+   TODO 046 Why is cliff collapse eroded during deposition (three size classes) no longer calculated? FIXED IN 1.1.22
+   TODO 058 Dave to check this DONE in 1.1.22
 */
 
 #ifndef CME_H
@@ -264,7 +275,7 @@ int const CAPE_POINT_MIN_SPACING = 10;                         // In cells: for 
 int const CLOCK_CHECK_ITERATION = 5000;                        // If have done this many timesteps then reset the CPU time running total
 int const COAST_LENGTH_MAX = 10;                               // For safety check when tracing coast
 int const COAST_LENGTH_MIN_X_PROF_SPACE = 20;                  // Ignore very short coasts less than this x profile spacing
-int const CSHOREARRAYOUTSIZE = 500;                            // The size of the arrays output by CShore, this must be the same as the value set when CShore is compiled
+int const CSHOREARRAYOUTSIZE = 500;                            // The size of the arrays output by CShore, this must be the same as the value set when CShore is compiled TODO 070
 int const FLOOD_FILL_START_OFFSET = 2;                         // In cells: flood fill starts this distance inside polygon
 int const GRID_MARGIN = 10;                                    // Ignore this many along-coast grid-edge points re. shadow zone calcs
 int const INT_NODATA = -9999;                                  // CME's internal NODATA value for ints
@@ -285,6 +296,7 @@ int const NO_LOG_FILE = 0;
 int const LOG_FILE_LOW_DETAIL = 1;
 int const LOG_FILE_MIDDLE_DETAIL = 2;
 int const LOG_FILE_HIGH_DETAIL = 3;
+int const LOG_FILE_ALL = 4;
 
 // Direction codes
 int const NO_DIRECTION = 0;
@@ -566,41 +578,41 @@ int const WAVE_MODEL_CSHORE = 1;
 int const UNCONS_SEDIMENT_EQUATION_CERC = 0;
 int const UNCONS_SEDIMENT_EQUATION_KAMPHUIS = 1;
 
-int const CLIFF_COLLAPSE_LENGTH_INCREMENT = 10;       // Increment the planview length of the cliff talus Dean profile, if we have not been able to deposit enough
+int const CLIFF_COLLAPSE_LENGTH_INCREMENT = 10;          // Increment the planview length of the cliff talus Dean profile, if we have not been able to deposit enough
 
 unsigned long const MASK = 0xfffffffful;
 unsigned long const SEDIMENT_INPUT_EVENT_ERROR = -1;
 
 double const PI = 3.141592653589793238462643;
 
-double const D50_FINE_DEFAULT = 0.0625;               // In mm
-double const D50_SAND_DEFAULT = 0.42;                 // Ditto
-double const D50_COARSE_DEFAULT = 19.0;               // Ditto
+double const D50_FINE_DEFAULT = 0.0625;                  // In mm
+double const D50_SAND_DEFAULT = 0.42;                    // In mm
+double const D50_COARSE_DEFAULT = 19.0;                  // In mm
 
-double const BEACH_PROTECTION_HB_RATIO = 0.23;        // The beach protection factor is this times breaking depth
-double const WALKDEN_HALL_PARAM_1 = 3.25;             // First param in Equation 4 from Walkden & Hall, 2005
-double const WALKDEN_HALL_PARAM_2 = 1.50;             // Second param in Equation 4 from Walkden & Hall, 2005
+double const BEACH_PROTECTION_HB_RATIO = 0.23;           // The beach protection factor is this times breaking depth
+double const WALKDEN_HALL_PARAM_1 = 3.25;                // First param in Equation 4 from Walkden & Hall, 2005
+double const WALKDEN_HALL_PARAM_2 = 1.50;                // Second param in Equation 4 from Walkden & Hall, 2005
 
-double const DEPTH_OVER_DB_INCREMENT = 0.001;         // Depth over DB increment for erosion potential look-up function
-double const INVERSE_DEPTH_OVER_DB_INCREMENT = 1000;  // Inverse of the above
-double const DEAN_POWER = 2.0 / 3.0;                  // Dean profile exponent
+double const DEPTH_OVER_DB_INCREMENT = 0.001;            // Depth over DB increment for erosion potential look-up function
+double const INVERSE_DEPTH_OVER_DB_INCREMENT = 1000;     // Inverse of the above
+double const DEAN_POWER = 2.0 / 3.0;                     // Dean profile exponent
 
 // TODO 011 Let the user define these CShore input parameters
-double const CSHORE_FRICTION_FACTOR = 0.015;          // Friction factor for CShore model
-double const CSHORE_SURGE_LEVEL = 0.0;                // TODO 007
+double const CSHORE_FRICTION_FACTOR = 0.015;             // Friction factor for CShore model
+double const CSHORE_SURGE_LEVEL = 0.0;                   // TODO 007
 
-double const TOLERANCE = 1e-7;                        // For bFPIsEqual, if too small (e.g. 1e-10), get spurious "rounding" errors
-double const SEDIMENT_ELEV_TOLERANCE = 1e-10;         // For bFPIsEqual, used to compare depth-equivalent sediment amounts
-double const MASS_BALANCE_TOLERANCE = 1e-5;           // For bFPIsEqual, used to compare for mass balance checks
+double const TOLERANCE = 1e-7;                           // For bFPIsEqual, if too small (e.g. 1e-10), get spurious "rounding" errors
+double const SEDIMENT_ELEV_TOLERANCE = 1e-10;            // For bFPIsEqual, used to compare depth-equivalent sediment amounts
+double const MASS_BALANCE_TOLERANCE = 1e-5;              // For bFPIsEqual, used to compare for mass balance checks
 double const STRAIGHT_COAST_MAX_DETAILED_CURVATURE = -5;
 double const STRAIGHT_COAST_MAX_SMOOTH_CURVATURE = -1;
-double const MIN_LENGTH_OF_SHADOW_ZONE_LINE = 10;     // Used in shadow line tracing
-double const MAX_LAND_LENGTH_OF_SHADOW_ZONE_LINE = 5; // Used in shadow line tracing
-double const CLIFF_COLLAPSE_HEIGHT_INCREMENT = 0.1;   // Increment the fractional height of the cliff talus Dean profile, if we have not been able to deposit enough
+double const MIN_LENGTH_OF_SHADOW_ZONE_LINE = 10;        // Used in shadow line tracing
+double const MAX_LAND_LENGTH_OF_SHADOW_ZONE_LINE = 5;    // Used in shadow line tracing
+double const CLIFF_COLLAPSE_HEIGHT_INCREMENT = 0.1;      // Increment the fractional height of the cliff talus Dean profile, if we have not been able to deposit enough
 
 double const DBL_NODATA = -9999;
 
-string const PROGRAM_NAME = "Coastal Modelling Environment (CoastalME) version 1.1.22 (03 Jul 2024)";
+string const PROGRAM_NAME = "Coastal Modelling Environment (CoastalME) version 1.2.0 (06 Nov 2024)";
 string const PROGRAM_NAME_SHORT = "CME";
 string const CME_INI = "cme.ini";
 
@@ -1103,12 +1115,12 @@ struct FillToWidth
 ostream &operator<<(ostream &, const FillToWidth &);
 
 string strDbl(double const, int const);
-string strDblRight(double const, int const, int const, bool = false);
+string strDblRight(double const, int const, int const, bool const = true);
 string strIntRight(int const, int const);
 string strCentre(string const, int const);
 string strRight(string const, int const);
 string strLeft(string const, int const);
-string strRightPerCent(double const, double const, int const); 
+string strRightPerCent(double const, double const, int const, int const, bool const = true);
 #endif
 
 //================================================= debugging stuff =============================================================

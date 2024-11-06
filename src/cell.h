@@ -228,9 +228,6 @@ public:
     bool bIsFloodBySetupSurgeRunup(void) const;    // TODO 007 Do we need this?
     bool bIsInContiguousFlood(void) const;         // TODO 007 Do we need this?
 
-    // void SetActualBeachErosionEstimated(void);
-    // bool bGetActualBeachErosionEstimated(void) const;
-
     void SetInActiveZone(bool const);
     bool bIsInActiveZone(void) const;
     bool bPotentialPlatformErosion(void) const;
@@ -328,11 +325,11 @@ public:
     double dCalcLayerElev(const int);
 
     double dGetTotConsFineThickConsiderNotch(void) const;
-    double dGetTotUnconsFineThickness(void) const;
+    double dGetTotUnconsFine(void) const;
     double dGetTotConsSandThickConsiderNotch(void) const;
-    double dGetTotUnconsSandThickness(void) const;
+    double dGetTotUnconsSand(void) const;
     double dGetTotConsCoarseThickConsiderNotch(void) const;
-    double dGetTotUnconsCoarseThickness(void) const;
+    double dGetTotUnconsCoarse(void) const;
 
     double dGetTotConsThickness(void) const;
     double dGetTotUnconsThickness(void) const;

@@ -726,8 +726,23 @@ bool CSimulation::bCheckRasterGISOutputFormat(void)
    }
 
    // This driver is OK, so store its longname and the default file extension
-   m_strGDALRasterOutputDriverLongname = CSLFetchNameValue(papszMetadata, "DMD_LONGNAME");
-   m_strGDALRasterOutputDriverExtension = CSLFetchNameValue(papszMetadata, "DMD_EXTENSION");
+   string strTmp = CSLFetchNameValue(papszMetadata, "DMD_LONGNAME");
+   m_strGDALRasterOutputDriverLongname = strTrim(&strTmp);
+   strTmp = CSLFetchNameValue(papszMetadata, "DMD_EXTENSIONS");         // Note DMD_EXTENSION (no S, is a single value) appears not to be implemented for newer drivers
+   strTmp = strTrim(&strTmp);
+
+   // We have a space-separated list of one or more file extensions: use the first extension in the list
+   long unsigned int nPos = strTmp.find(SPACE);
+   if (nPos == string::npos)
+   {
+      // No space i.e. just one extension
+      m_strGDALRasterOutputDriverExtension = strTmp;
+   }
+   else
+   {
+      // There's a space, so we must have more than one extension
+       m_strGDALRasterOutputDriverExtension = strTmp.substr(0, nPos);
+   }
 
    // Set up any defaults for raster files that are created using this driver
    SetRasterFileCreationDefaults();
@@ -1600,7 +1615,7 @@ void CSimulation::GetRasterOutputMinMax(int const nDataItem, double&dMin, double
                if (nPoly == INT_NODATA)
                   dTmp = m_dMissingValue;
                else
-                  dTmp = m_pVCoastPolygon[nPoly]->dGetDepositionAllUncons();
+                  dTmp = m_pVCoastPolygon[nPoly]->dGetBeachDepositionAndSuspensionAllUncons();
                break;
          }
 
@@ -1621,9 +1636,8 @@ void CSimulation::GetRasterOutputMinMax(int const nDataItem, double&dMin, double
 //===============================================================================================================================
 void CSimulation::SetRasterFileCreationDefaults(void)
 {
-   string
-       strDriver = strToLower(&m_strRasterGISOutFormat),
-       strComment = "Created by " + PROGRAM_NAME + " for " + PLATFORM + " " + strGetBuild() + " running on " + strGetComputerName();
+   string strDriver = strToLower(&m_strRasterGISOutFormat);
+   string strComment = "Created by " + PROGRAM_NAME + " for " + PLATFORM + " " + strGetBuild() + " running on " + strGetComputerName();
 
    // TODO 034 Do these for all commonly-used file types
    if (strDriver == "aaigrid")
@@ -1639,11 +1653,8 @@ void CSimulation::SetRasterFileCreationDefaults(void)
       if (m_bWorldFile)
          m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "TFW", "YES");
 
-      //       if (m_bCompressGTIFF)
-      //       {
-      //          m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "NUM_THREADS", "ALL_CPUS");
-      //          m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "COMPRESS", "LZW");
-      //       }
+      m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "NUM_THREADS", "ALL_CPUS");
+      m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "COMPRESS", "LZW");
    }
 
    else if (strDriver == "hfa")
@@ -1671,16 +1682,22 @@ void CSimulation::SetRasterFileCreationDefaults(void)
 
    else if (strDriver == "rst")
    {
+      m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "COMMENT", strComment.c_str());
    }
 
-   else if (m_strVectorGISOutFormat == "geojson")
+   else if (strDriver == "geojson")
    {
+      // m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "COMMENT", strComment.c_str());
    }
 
-   else if (m_strVectorGISOutFormat == "gpkg")
+   else if (strDriver == "gpkg")
    {
-      // TODO 058 This only applies to vector files, GDAL does not (yet) support overwriting raster files, see https://gis.stackexchange.com/questions/377450/overwrite-existing-raster-layer-using-pyqgis
-//      m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "OVERWRITE", "YES");
+      // TODO 065 Does GDAL support overwriting raster gpkg files yet?
+      m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "OVERWRITE", "YES");
+      m_papszGDALRasterOptions = CSLSetNameValue(m_papszGDALRasterOptions, "USE_TILE_EXTENT", "YES");
+   }
+   else if (strDriver == "netcdf")
+   {
    }
 }
 

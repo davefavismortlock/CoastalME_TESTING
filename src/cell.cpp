@@ -160,16 +160,6 @@ bool CGeomCell::bIsInContiguousFlood(void) const
    return m_bInContiguousFlood;
 }
 
-// void CGeomCell::SetActualBeachErosionEstimated(void)
-// {
-//    m_bEstimated = true;
-// }
-
-// bool CGeomCell::bGetActualBeachErosionEstimated(void) const
-// {
-//    return m_bEstimated;
-// }
-
 //! Sets a flag to show whether this cell is in the active zone
 void CGeomCell::SetInActiveZone(bool const bFlag)
 {
@@ -593,13 +583,12 @@ double CGeomCell::dGetThisIterTotWaterLevel(void) const
 //! Returns the total thickness of fine consolidated sediment on this cell, minus the depth-equivalent of any cliff notch
 double CGeomCell::dGetTotConsFineThickConsiderNotch(void) const
 {
-double dTotThick = 0;
+   double dTotThick = 0;
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
    {
       CRWCellLayer m_Layer = m_VLayerAboveBasement[n];
-      double 
-         dLayerThick = m_Layer.dGetFineConsolidatedThickness(),      
-         dNotchEquiv = m_Layer.pGetConsolidatedSediment()->dGetNotchFineLost();
+      double dLayerThick = m_Layer.dGetFineConsolidatedThickness();
+      double dNotchEquiv = m_Layer.pGetConsolidatedSediment()->dGetNotchFineLost();
       
       dTotThick += (dLayerThick - dNotchEquiv);
    }
@@ -608,9 +597,9 @@ double dTotThick = 0;
 }
 
 //! Returns the total thickness of fine unconsolidated sediment on this cell
-double CGeomCell::dGetTotUnconsFineThickness(void) const
+double CGeomCell::dGetTotUnconsFine(void) const
 {
-double dTotThick = 0;
+   double dTotThick = 0;
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
       dTotThick += m_VLayerAboveBasement[n].dGetFineUnconsolidatedThickness();
 
@@ -620,13 +609,12 @@ double dTotThick = 0;
 //! Returns the total thickness of sand-sized consolidated sediment on this cell, minus the depth-equivalent of any cliff notch
 double CGeomCell::dGetTotConsSandThickConsiderNotch(void) const
 {
-double dTotThick = 0;
+   double dTotThick = 0;
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
    {
       CRWCellLayer m_Layer = m_VLayerAboveBasement[n];
-      double 
-         dLayerThick = m_Layer.dGetSandConsolidatedThickness(),      
-         dNotchEquiv = m_Layer.pGetConsolidatedSediment()->dGetNotchSandLost();
+      double dLayerThick = m_Layer.dGetSandConsolidatedThickness();
+      double dNotchEquiv = m_Layer.pGetConsolidatedSediment()->dGetNotchSandLost();
       
       dTotThick += (dLayerThick - dNotchEquiv);
    }
@@ -635,9 +623,9 @@ double dTotThick = 0;
 }
 
 //! Returns the total thickness of sand-sized unconsolidated sediment on this cell
-double CGeomCell::dGetTotUnconsSandThickness(void) const
+double CGeomCell::dGetTotUnconsSand(void) const
 {
-double dTotThick = 0;
+   double dTotThick = 0;
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
       dTotThick += m_VLayerAboveBasement[n].dGetSandUnconsolidatedThickness();
 
@@ -647,13 +635,12 @@ double dTotThick = 0;
 //! Returns the total thickness of coarse consolidated sediment on this cell, minus the depth-equivalent of any cliff notch
 double CGeomCell::dGetTotConsCoarseThickConsiderNotch(void) const
 {
-double dTotThick = 0;
+   double dTotThick = 0;
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
    {
       CRWCellLayer m_Layer = m_VLayerAboveBasement[n];
-      double 
-         dLayerThick = m_Layer.dGetCoarseConsolidatedThickness(),      
-         dNotchEquiv = m_Layer.pGetConsolidatedSediment()->dGetNotchCoarseLost();
+      double dLayerThick = m_Layer.dGetCoarseConsolidatedThickness();
+      double dNotchEquiv = m_Layer.pGetConsolidatedSediment()->dGetNotchCoarseLost();
       
       dTotThick += (dLayerThick - dNotchEquiv);
    }
@@ -662,7 +649,7 @@ double dTotThick = 0;
 }
 
 //! Returns the total thickness of coarse unconsolidated sediment on this cell
-double CGeomCell::dGetTotUnconsCoarseThickness(void) const
+double CGeomCell::dGetTotUnconsCoarse(void) const
 {
 double dTotThick = 0;
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
@@ -715,7 +702,7 @@ void CGeomCell::CalcAllLayerElevsAndD50(void)
    for (unsigned int n = 0; n < m_VLayerAboveBasement.size(); n++)
       m_VdAllHorizonTopElev.push_back(m_VLayerAboveBasement[n].dGetTotalThickness() + m_VdAllHorizonTopElev[m++]); // Elevation of top of layer n
 
-   // Now calculate the d50 of the topmost unconsolidated sediment layer with non-zero thickness
+   // Now calculate the d50 of the topmost unconsolidated sediment layer with non-zero thickness. If there is no unconsolidated sediment, m_dUnconsD50 is set to DBL_NODATA
    m_dUnconsD50 = DBL_NODATA;
    for (int n = static_cast<int>(m_VLayerAboveBasement.size()) - 1; n >= 0; n--)
    {
@@ -1046,26 +1033,26 @@ double CGeomCell::dGetPotentialBeachErosion(void) const
    return m_dPotentialBeachErosionThisIter;
 }
 
-//! Get total potential (unconstrained) beach erosion
+//! Get total potential (supply-unconstrained) beach erosion
 double CGeomCell::dGetTotPotentialBeachErosion(void) const
 {
    return m_dTotPotentialBeachErosion;
 }
 
-//! Set this-timestep actual (constrained) beach erosion and increment total actual beach erosion
+//! Set this-timestep actual (supply-constrained) beach erosion and increment total actual beach erosion
 void CGeomCell::SetActualBeachErosion(double const dThisActualErosion)
 {
    m_dActualBeachErosionThisIter = dThisActualErosion;
    m_dTotActualBeachErosion += dThisActualErosion;
 }
 
-//! Get actual (constrained) beach erosion
+//! Get actual (supply-constrained) beach erosion
 double CGeomCell::dGetActualBeachErosion(void) const
 {
    return m_dActualBeachErosionThisIter;
 }
 
-//! Get total actual (constrained) beach erosion
+//! Get total actual (supply-constrained) beach erosion
 double CGeomCell::dGetTotActualBeachErosion(void) const
 {
    return m_dTotActualBeachErosion;

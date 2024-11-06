@@ -294,7 +294,7 @@ CSimulation::CSimulation (void)
    m_dCoastNormalLength =
    m_dThisIterTotSeaDepth =
    m_dThisIterPotentialSedLostBeachErosion =
-   m_dThisIterLeftGridUnconsFine =
+   m_dThisIterLeftGridUnconsFine =                 // TODO 067
    m_dThisIterLeftGridUnconsSand =
    m_dThisIterLeftGridUnconsCoarse =
    m_dThisIterPotentialPlatformErosion =
@@ -308,8 +308,8 @@ CSimulation::CSimulation (void)
    m_dThisIterBeachDepositionSand =
    m_dThisIterBeachDepositionCoarse =
    m_dThisIterFineSedimentToSuspension =
-   m_dThisIterDepositionSandDiff =
-   m_dThisIterDepositionCoarseDiff =
+   m_dDepositionSandDiff =
+   m_dDepositionCoarseDiff =
    m_dDepthOverDBMax =
    m_dTotPotentialPlatformErosionOnProfiles =
    m_dTotPotentialPlatformErosionBetweenProfiles =
@@ -343,17 +343,23 @@ CSimulation::CSimulation (void)
    m_dThisiterUnconsFineInput =
    m_dThisiterUnconsSandInput =
    m_dThisiterUnconsCoarseInput = 
-   m_dStartIterSuspFine =
-   m_dStartIterUnconsFine =
-   m_dStartIterUnconsSand =
-   m_dStartIterUnconsCoarse = 
-   m_dStartIterConsFine =
-   m_dStartIterConsSand =
-   m_dStartIterConsCoarse = 
+   m_dStartIterSuspFineAllCells =
+   m_dStartIterSuspFineInPolygons =
+   m_dStartIterUnconsFineAllCells =
+   m_dStartIterUnconsSandAllCells =
+   m_dStartIterUnconsCoarseAllCells =
+   m_dStartIterConsFineAllCells =
+   m_dStartIterConsSandAllCells =
+   m_dStartIterConsCoarseAllCells =
    m_dThisIterDiffTotWaterLevel = 
    m_dThisIterDiffWaveSetupWaterLevel = 
    m_dThisIterDiffWaveSetupSurgeWaterLevel = 
-   m_dThisIterDiffWaveSetupSurgeRunupWaterLevel = 0;
+   m_dThisIterDiffWaveSetupSurgeRunupWaterLevel =
+   m_dTotalFineUnconsInPolygons =
+   m_dTotalSandUnconsInPolygons =
+   m_dTotalCoarseUnconsInPolygons =
+   m_dUnconsSandNotDepositedLastIter =
+   m_dUnconsCoarseNotDepositedLastIter = 0;
 
    m_dMinSWL = DBL_MAX;
    m_dMaxSWL = DBL_MIN;
@@ -361,7 +367,7 @@ CSimulation::CSimulation (void)
    for (int i = 0; i < 6; i++)
       m_dGeoTransform[i] = 0;
 
-   // TODO 058 May wish to make this a user-supplied value
+   // TODO 011 May wish to make this a user-supplied value
    m_dMissingValue = DBL_NODATA;
 
    m_ldGTotPotentialPlatformErosion =
@@ -635,16 +641,18 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
    if (nRet != RTN_OK)
       return nRet;
 
-   // Now that we have a value for m_dCellSide, we can check some more input paramters
-   // Talus must be more than one cell wide, and since the number of cells must be odd, three cells is the minimum width
-   int nTmp = nConvertMetresToNumCells(m_dCliffDepositionPlanviewWidth);
-   if (nTmp < 3)
+   // If we are simulating cliff collapse: then now that we have a value for m_dCellSide, we can check some more input parameters. Talus must be more than one cell wide, and since the number of cells must be odd, three cells is the minimum width
+   if (m_bDoCliffCollapse)
    {
-      string strErr = ERR + "cliff deposition must have a planview width of at least three cells. The current setting of " + to_string(m_dCliffDepositionPlanviewWidth) + " m gives a planview width of " + to_string(nTmp) + " cells. Please edit " + m_strDataPathName;
-      cerr << strErr << endl;
-      LogStream << strErr << endl;
-      OutStream << strErr << endl;
-      return RTN_ERR_RUNDATA;
+      int nTmp = nConvertMetresToNumCells(m_dCliffDepositionPlanviewWidth);
+      if (nTmp < 3)
+      {
+         string strErr = ERR + "cliff deposition must have a planview width of at least three cells. The current setting of " + to_string(m_dCliffDepositionPlanviewWidth) + " m gives a planview width of " + to_string(nTmp) + " cells. Please edit " + m_strDataPathName;
+         cerr << strErr << endl;
+         LogStream << strErr << endl;
+         OutStream << strErr << endl;
+         return RTN_ERR_RUNDATA;
+      }
    }
 
    // Do some more initialisation
@@ -860,7 +868,7 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
    m_bConsChangedThisIter.resize(m_nLayers, false);
    m_bUnconsChangedThisIter.resize(m_nLayers, false);
 
-   // Normalize erodibility values, so that none are > 1
+   // Normalize sediment erodibility values, so that none are > 1
    double dTmp = m_dFineErodibility + m_dSandErodibility + m_dCoarseErodibility;
    m_dFineErodibilityNormalized = m_dFineErodibility / dTmp;
    m_dSandErodibilityNormalized = m_dSandErodibility / dTmp;
@@ -908,19 +916,17 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
       if (nRet != RTN_OK)
          return nRet;
 
-      // Do per-timestep intialization: set up the grid cells ready for this timestep, also initialize per-timestep totals. Note that in the first timestep, all cells -- including hinterland cells -- are given the deep water wave values
+      // Do per-timestep intialization: set up the grid cells ready for this timestep, also initialize per-timestep totals. Note that in the first timestep, all cells (including hinterland cells) are given the deep water wave values
       nRet = nInitGridAndCalcStillWaterLevel();
       if (nRet != RTN_OK)
          return nRet;
 
       // Next find out which cells are inundated and locate the coastline(s). This also gives to all sea cells, wave values which are the same as the deep water values. For shallow water sea cells, these wave values will be changed later, in nDoAllPropagateWaves()
-      nRet = nLocateSeaAndCoasts();
+      int nValidCoast = 0;
+      nRet = nLocateSeaAndCoasts(nValidCoast);
       if (nRet != RTN_OK)
          return nRet;
       
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << endl;
-
       // Tell the user how the simulation is progressing
       AnnounceProgress();
 
@@ -950,9 +956,6 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
       nRet = nCreateAllProfilesAndCheckForIntersection();
       if (nRet != RTN_OK)
          return nRet;
-
-      // if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-      //    LogStream << endl;
 
       // Tell the user how the simulation is progressing
       AnnounceProgress();
@@ -988,9 +991,6 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
       if (nRet != RTN_OK)
          return nRet;
 
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << endl;
-
       // Tell the user how the simulation is progressing
       AnnounceProgress();
 
@@ -1024,8 +1024,16 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
       if (nRet != RTN_OK)
          return nRet;
 
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << endl;
+
+      // Output polygon share table and pre-existing sediment table to log file
+      if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
+      {
+         for (int nCoast = 0; nCoast < nValidCoast; nCoast++)
+         {
+            WritePolygonShareTable(nCoast);
+            WritePolygonPreExistingSediment(nCoast);
+         }
+      }
 
       // Tell the user how the simulation is progressing
       AnnounceProgress();
@@ -1094,6 +1102,17 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
       //       delete[] pdRaster;
       //       // DEBUG CODE ===========================================
 
+      // Save the not-deposited values, to be shown in the logfile after we've finished beach sediment movement
+      m_dUnconsSandNotDepositedLastIter = m_dDepositionSandDiff;
+      m_dUnconsCoarseNotDepositedLastIter = m_dDepositionCoarseDiff;
+
+      if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
+         if (m_dDepositionSandDiff > MASS_BALANCE_TOLERANCE)
+         {
+            LogStream << m_ulIter << ": AT ITERATION START m_dDepositionSandDiff = " << m_dDepositionSandDiff * m_dCellArea << " m_dUnconsSandNotDepositedLastIter = " << m_dUnconsSandNotDepositedLastIter << endl;
+            LogStream << m_ulIter << ": AT ITERATION START m_dDepositionCoarseDiff = " << m_dDepositionCoarseDiff * m_dCellArea << " m_dUnconsCoarseNotDepositedLastIter = " << m_dUnconsCoarseNotDepositedLastIter << endl;
+         }
+
       if (m_bDoShorePlatformErosion)
       {
          // Calculate elevation change on the consolidated sediment which comprises the coastal platform
@@ -1101,13 +1120,27 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
          if (nRet != RTN_OK)
             return nRet;
       }
-            
+
+      // Output shore platform erosion table to log file
+      if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
+      {
+         for (int nCoast = 0; nCoast < nValidCoast; nCoast++)
+            WritePolygonShorePlatformErosion(nCoast);
+      }
+
       if (m_bDoCliffCollapse)
       {
          // Do all cliff collapses for this timestep (if any)
          nRet = nDoAllWaveEnergyToCoastLandforms();
          if (nRet != RTN_OK)
             return nRet;
+      }
+
+      // Output cliff collapse table to log file
+      if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
+      {
+         for (int nCoast = 0; nCoast < nValidCoast; nCoast++)
+            WritePolygonCliffCollapseErosion(nCoast);
       }
 
       // Tell the user how the simulation is progressing
@@ -1124,10 +1157,10 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
             return nRet;
       }
 
-      // Add the fine sediment that was eroded this timestep (from the shore platform, from cliff collapse, from erosion of existing fine sediment during cliff collapse talus deposition, and from beach erosion; minus the fine sediment from beach erosion that went off-grid) to the suspended sediment load
-      double dFineThisIter = m_dThisIterActualPlatformErosionFineCons + m_dThisIterCliffCollapseErosionFineUncons + m_dThisIterCliffCollapseErosionFineCons + m_dThisIterCliffCollapseFineErodedDuringDeposition + m_dThisIterBeachErosionFine - m_dThisIterLeftGridUnconsFine;
-      
-      m_dThisIterFineSedimentToSuspension += dFineThisIter;
+//       // Add the fine sediment that was eroded this timestep (from the shore platform, from cliff collapse, from erosion of existing fine sediment during cliff collapse talus deposition, and from beach erosion; minus the fine sediment from beach erosion that went off-grid) to the suspended sediment load
+//       double dFineThisIter = m_dThisIterActualPlatformErosionFineCons + m_dThisIterCliffCollapseErosionFineUncons + m_dThisIterCliffCollapseErosionFineCons + m_dThisIterCliffCollapseFineErodedDuringDeposition + m_dThisIterBeachErosionFine - m_dThisIterLeftGridUnconsFine;
+//
+//       m_dThisIterFineSedimentToSuspension += dFineThisIter;
       
       // Tell the user how the simulation is progressing
       AnnounceProgress();
@@ -1224,7 +1257,7 @@ int CSimulation::nDoSimulation(int nArg, char const* pcArgv[])
       // Now save results, first the raster and vector GIS files if required
       m_bSaveGISThisIter = false;
 
-      if ( (m_bSaveRegular && (m_dSimElapsed >= m_dRegularSaveTime) && (m_dSimElapsed < m_dSimDuration)) || (! m_bSaveRegular && (m_dSimElapsed >= m_dUSaveTime[m_nThisSave])))
+      if ((m_bSaveRegular && (m_dSimElapsed >= m_dRegularSaveTime) && (m_dSimElapsed < m_dSimDuration)) || (! m_bSaveRegular && (m_dSimElapsed >= m_dUSaveTime[m_nThisSave])))
       {
          m_bSaveGISThisIter = true;
 

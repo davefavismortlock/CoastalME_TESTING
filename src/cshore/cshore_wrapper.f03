@@ -8,8 +8,8 @@ subroutine CShoreWrapper(In_ILINE, In_IPROFL, In_IPERM, In_IOVER, In_IWCINT, In_
 
    use CShoreShared
    
-   ! DFM TODO Can these be made dynamic?
-   integer :: NN = 500, NL = 1
+   ! DFM TODO 070 Make these dynamically allocated
+   integer, parameter :: NN = 500, NL = 1
 
    integer(c_int), intent(in) :: In_ILINE       ! Number of cross-shore lines i.e. number of CoastalME profiles
    integer(c_int), intent(in) :: In_IPROFL      ! 0 for fixed bottom profile (assumes ISEDAV = 0), 1 for profile evolution computation (need to input ISEDAV)

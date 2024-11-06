@@ -2,7 +2,7 @@
 ;
 ; Data file for CoastalME
 ;
-; Copyright (C) 2023 David Favis-Mortlock and Andres Payo
+; Copyright (C) 2024 David Favis-Mortlock and Andres Payo
 ;
 ;=====================================================================================================================
 ;
@@ -22,7 +22,7 @@
 ;
 ; Run information ---------------------------------------------------------------------------------------------------------------------------------------------
 Main output/log file names                                          [omit path and extension]: C003_0001_sim_0001
-Content of log file                                       [1 = least detail, 3 = most detail]: 3
+Content of log file                                               [0 = least detail, 4 = all]: 4
 
 Simulation start date and time                                          [hh-mm-ss dd/mm/yyyy]: 00-00-00 01/01/2020
 Duration of simulation                                           [hours, days, months, years]: 3 days
@@ -87,7 +87,7 @@ Tide data is the change (m) from still water level for each timestep            
 Breaking wave height to water depth ratio (non dimensional)                                  : 0.8
 
 ; Sediment data -----------------------------------------------------------------------------------------------------------------------------------------------
-Simulate coast platform erosion?                                                             : y
+Simulate coast platform erosion?                                                             : n      ; *** y
 Resistance of coast platform (m^(9/4)s^(3/2))                                                : 8e6       ; [2-6]e6 to produce 0.6 m/yr recession (Walkden & Hall, 2011), is 1/erodibility
 
 Simulate beach sediment transport?                                                           : y
@@ -113,12 +113,12 @@ Transport parameter                                                   [only for 
 Berm height i.e. height above SWL of start of depositional Dean profile (m)                  : 0.5
 
 ; Cliff collapse data -----------------------------------------------------------------------------------------------------------------------------------------
-Simulate cliff collapse?                                                                     : y
+Simulate cliff collapse?                                                                     : n       ; *** y
 Resistance to erosion of cliff (m^(9/4)s^(3/2))                                              : 2e3        ; Note is different from coast platform erosion resistance
 Notch overhang to initiate collapse (m)                                                      : 0.50
 Notch base below still water level (m)                                                       : 0.3       ; Must be greater than zero
 Scale parameter A for cliff deposition (m^(1/3))                                   [0 = auto]: 0         ; For a 0.2 mm D50, will be 0.1
-Approximate planview width of cliff deposition talus (m)                                     : 30     ; *** WAS 5
+Approximate planview width of cliff deposition talus (m)                                     : 30        ; was 5
 Planview length of cliff deposition talus (m)                                                : 50        ; was 30 15
 Height of landward talus end, as fraction of cliff elevation                                 : 0
 

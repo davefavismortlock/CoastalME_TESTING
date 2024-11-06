@@ -529,7 +529,7 @@ private:
    //! The duration of data for deep water waves, expressed as a number of time steps
    int m_nDeepWaterWaveDataNumTimeSteps;
 
-   //! The level of detail in the log file output. Can be LOG_FILE_LOW_DETAIL, LOG_FILE_MIDDLE_DETAIL, or LOG_FILE_HIGH_DETAIL
+   //! The level of detail in the log file output. Can be LOG_FILE_LOW_DETAIL, LOG_FILE_MIDDLE_DETAIL, LOG_FILE_HIGH_DETAIL, or LOG_FILE_ALL
    int m_nLogFileDetail;
 
    //! The run-up equation used TODO 007
@@ -825,20 +825,20 @@ private:
    //! Total coarse unconsolidated sediment lost from the grid this iteration (depth in m)
    double m_dThisIterLeftGridUnconsCoarse;
 
-   //! Total fine sediment eroded during deposition following cliff collapse (depth in m) TODO 046 Why is this no longer calculated?
+   //! Total fine sediment eroded during Dean profile deposition of talus following cliff collapse (depth in m)
    double m_dThisIterCliffCollapseFineErodedDuringDeposition;
 
-   //! Total sand sediment eroded during deposition following cliff collapse (depth in m) TODO 046 Why is this no longer calculated?
+   //! Total sand sediment eroded during Dean profile deposition of talus following cliff collapse (depth in m)
    double m_dThisIterCliffCollapseSandErodedDuringDeposition;
 
-   //! Total coarse sediment eroded during deposition following cliff collapse (depth in m) TODO 046 Why is this no longer calculated?
+   //! Total coarse sediment eroded during Dean profile deposition of talus following cliff collapse (depth in m)
    double m_dThisIterCliffCollapseCoarseErodedDuringDeposition;
 
    //! Error term: if we are unable to deposit enough unconslidated sand on polygon(s), this is held over to be deposited the next iteration
-   double m_dThisIterDepositionSandDiff;
+   double m_dDepositionSandDiff;
 
    //! Error term: if we are unable to deposit enough unconslidated coarse on polygon(s), this is held over to be deposited the next iteration
-   double m_dThisIterDepositionCoarseDiff;
+   double m_dDepositionCoarseDiff;
 
    //! Maximum value of deoth over DB, is used in erosion potential look-up function
    double m_dDepthOverDBMax;
@@ -927,26 +927,53 @@ private:
    //! Depth (m) of coarse unconsolidated sediment added, at this iteration
    double m_dThisiterUnconsCoarseInput;
 
-   //! Depth (m) of fine suspended sediment at the start of the simulation
-   double m_dStartIterSuspFine;
+   //! Depth (m) of fine suspended sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterSuspFineAllCells;
 
-   //! Depth (m) of fine unconsolidated sediment at the start of the simulation
-   double m_dStartIterUnconsFine;
+   //! Depth (m) of fine suspended sediment at the start of the simulation (only cells in polygons)
+   double m_dStartIterSuspFineInPolygons;
 
-   //! Depth (m) of sand unconsolidated sediment at the start of the simulation
-   double m_dStartIterUnconsSand;
+   //! Depth (m) of fine unconsolidated sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterUnconsFineAllCells;
 
-   //! Depth (m) of coarse unconsolidated sediment at the start of the simulation
-   double m_dStartIterUnconsCoarse;
+   //! Depth (m) of sand unconsolidated sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterUnconsSandAllCells;
 
-   //! Depth (m) of fine consolidated sediment at the start of the simulation
-   double m_dStartIterConsFine;
+   //! Depth (m) of coarse unconsolidated sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterUnconsCoarseAllCells;
 
-   //! Depth (m) of sand consolidated sediment at the start of the simulation
-   double m_dStartIterConsSand;
+   //! Depth (m) of fine consolidated sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterConsFineAllCells;
 
-   //! Depth (m) of coarse consolidated sediment at the start of the simulation
-   double m_dStartIterConsCoarse;
+   //! Depth (m) of sand consolidated sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterConsSandAllCells;
+
+   //! Depth (m) of coarse consolidated sediment at the start of the simulation, all cells (both inside and outside polygons)
+   double m_dStartIterConsCoarseAllCells;
+
+   //! Total fine unconsolidated sediment in all polygons, before polygon-to-polygon movement (only cells in polygons)
+   double m_dTotalFineUnconsInPolygons;
+
+   //! Total sand unconsolidated sediment in all polygons, before polygon-to-polygon movement (only cells in polygons)
+   double m_dTotalSandUnconsInPolygons;
+
+   //! Total coarse unconsolidated sediment in all polygons, before polygon-to-polygon movement (only cells in polygons)
+   double m_dTotalCoarseUnconsInPolygons;
+
+   //! Total fine consolidated sediment in all polygons, before polygon-to-polygon movement (only cells in polygons)
+   double m_dTotalFineConsInPolygons;
+
+   //! Total sand consolidated sediment in all polygons, before polygon-to-polygon movement (only cells in polygons)
+   double m_dTotalSandConsInPolygons;
+
+   //! Total coarse consolidated sediment in all polygons, before polygon-to-polygon movement (only cells in polygons)
+   double m_dTotalCoarseConsInPolygons;
+
+   //! Depth of unconsolidated sand sediment that could not be deposited during the last iteration, carried forward to this iteration
+   double m_dUnconsSandNotDepositedLastIter;
+
+   //! Depth of unconsolidated coarse sediment that could not be deposited during the last iteration, carried forward to this iteration
+   double m_dUnconsCoarseNotDepositedLastIter;
 
    // These grand totals are all long doubles. The aim is to minimize rounding errors when many very small numbers are added to a single much larger number, see e.g. http://www.ddj.com/cpp/184403224
 
@@ -1516,7 +1543,7 @@ private:
    int nCheckForSedimentInputEvent(void);
    int nCalcExternalForcing(void);
    int nInitGridAndCalcStillWaterLevel(void);
-   int nLocateSeaAndCoasts(void);
+   int nLocateSeaAndCoasts(int&);
    int nLocateFloodAndCoasts(void);
    int nAssignAllCoastalLandforms(void);
    int nAssignNonCoastlineLandforms(void);
@@ -1533,7 +1560,7 @@ private:
    void FloodFillSea(int const, int const);
    void FloodFillLand(int const, int const);
    int nTraceCoastLine(unsigned int const, int const, int const, vector<bool>*, vector<CGeom2DIPoint> const*);
-   int nTraceAllCoasts(void);
+   int nTraceAllCoasts(int&);
    int nTraceFloodCoastLine(unsigned int const, int const, int const, vector<bool>*, vector<CGeom2DIPoint> const*);
    int nTraceAllFloodCoasts(void);
    void DoCoastCurvature(int const, int const);
@@ -1598,7 +1625,7 @@ private:
    // int nEstimateBeachErosionOnPolygon(int const, int const, double const);
    // int nEstimateErosionOnPolygon(int const, int const, double const, double&, double&, double&);
    // int nEstimateUnconsErosionOnParallelProfile(/*int const, int const,*/ int const, int const, /* int const, */ int const, vector<CGeom2DIPoint> const*, vector<double> const*, double&, double&, double&, double&, double&);
-   int nDoParallelProfileUnconsErosion( int const, int const,  int const, int const, int const,  int const,  int const, vector<CGeom2DIPoint> const*, vector<double> const*, double&, double&, double&);
+   int nDoParallelProfileUnconsErosion(int const, int const, int const,  int const, int const, int const, int const, int const, vector<CGeom2DIPoint> const*, vector<double> const*, double&, double&, double&);
    // void EstimateUnconsErosionOnCell(int const, int const, int const, double const, double&, double&, double&);
    void ErodeCellBeachSedimentSupplyLimited(int const, int const, int const, int const, double const, double&);
    // int nEstimateMovementUnconsToAdjacentPolygons(int const, int const);
@@ -1728,7 +1755,7 @@ private:
    void WritePolygonSedimentBeforeMovement(int const);
    void WritePolygonPotentialErosion(int const);
    // void WritePolygonUnconsErosion(int const);
-   // void WritePolygonUnsortedSequence(int const, vector<vector<int> >&);
+   void WritePolygonUnsortedSequence(int const, vector<vector<int> >&);
    void WritePolygonSortedSequence(int const, vector<vector<int> >&);
    void WritePolygonEstimatedMovement(int const, vector<vector<int> >&);
    void WritePolygonActualMovement(int const, vector<vector<int> > const&);

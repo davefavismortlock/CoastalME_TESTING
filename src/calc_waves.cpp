@@ -119,7 +119,7 @@ int CSimulation::nSetAllCoastpointDeepWaterWaveValues(void)
             dNextProfileDeepWaterWaveAngle = pNextProfile->dGetProfileDeepWaterWaveAngle();
             dNextProfileDeepWaterWavePeriod = pNextProfile->dGetProfileDeepWaterWavePeriod();
 
-            //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast point = " << nPoint << " IS PROFILE START, dThisDeepWaterWaveHeight = " << dThisDeepWaterWaveHeight << ", dThisDeepWaterWaveAngle = " << dThisDeepWaterWaveAngle << endl;
+            //             LogStream << m_ulIter << ": coast point = " << nPoint << " IS PROFILE START, dThisDeepWaterWaveHeight = " << dThisDeepWaterWaveHeight << ", dThisDeepWaterWaveAngle = " << dThisDeepWaterWaveAngle << endl;
          }
 
          else
@@ -139,7 +139,7 @@ int CSimulation::nSetAllCoastpointDeepWaterWaveValues(void)
             m_VCoast[nCoast].SetCoastDeepWaterWaveAngle(nPoint, dThisDeepWaterWaveAngle);
             m_VCoast[nCoast].SetCoastDeepWaterWavePeriod(nPoint, dThisDeepWaterWavePeriod);
 
-            //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast point = " << nPoint << " dThisDeepWaterWaveHeight = " << dThisDeepWaterWaveHeight << " dThisDeepWaterWaveAngle = " << dThisDeepWaterWaveAngle << endl;
+            //             LogStream << m_ulIter << ": coast point = " << nPoint << " dThisDeepWaterWaveHeight = " << dThisDeepWaterWaveHeight << " dThisDeepWaterWaveAngle = " << dThisDeepWaterWaveAngle << endl;
          }
       }
    }
@@ -214,7 +214,7 @@ int CSimulation::nDoAllPropagateWaves(void)
    // OK, do we have some profiles other than start of coast or end of coast profiles in the all-profile vectors? We need to check this, because GDALGridCreate() in nInterpolateWavePropertiesToWithinPolygonCells() does not work if we give it only a start-of-coast or an end-of-coast profile to work with TODO 006 Is this still true?
    if (! bSomeNonStartOrEndOfCoastProfiles)
    {
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): waves are on-shore only for start and/or end of coast profiles" << endl;
+      LogStream << m_ulIter << ": waves are on-shore only for start and/or end of coast profiles" << endl;
 
       return RTN_OK;
    }
@@ -333,7 +333,7 @@ int CSimulation::nDoAllPropagateWaves(void)
    // Are the waves off-shore for every profile? If so, do nothing more
    if (VbBreakingAll.empty())
    {
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): waves off-shore for all profiles" << endl;
+      LogStream << m_ulIter << ": waves off-shore for all profiles" << endl;
 
       return RTN_OK;
    }
@@ -627,21 +627,19 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
    // Only do this for profiles without problems. Still do start- and end-of-coast profiles however
    if (!pProfile->bOKIncStartAndEndOfCoast())
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " has been marked invalid, will not calc wave properties on this profile" << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": Coast " << nCoast << ", profile " << nProfile << " has been marked invalid, will not calc wave properties on this profile" << endl;
 
       return RTN_OK;
    }
 
-   int
-       nSeaHand = m_VCoast[nCoast].nGetSeaHandedness(),
-       nCoastPoint = pProfile->nGetNumCoastPoint();
+   int nSeaHand = m_VCoast[nCoast].nGetSeaHandedness();
+   int nCoastPoint = pProfile->nGetNumCoastPoint();
 
    // Get the flux orientation (the orientation of a line which is tangential to the coast) at adjacent coastline points. Note special treatment for the coastline end points
-   double
-       dFluxOrientationThis = m_VCoast[nCoast].dGetFluxOrientation(nCoastPoint),
-       dFluxOrientationPrev = 0,
-       dFluxOrientationNext = 0;
+   double dFluxOrientationThis = m_VCoast[nCoast].dGetFluxOrientation(nCoastPoint);
+   double dFluxOrientationPrev = 0;
+   double dFluxOrientationNext = 0;
 
    if (nCoastPoint == 0)
    {
@@ -669,12 +667,12 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
    if (bFPIsEqual(dWaveToNormalAngle, DBL_NODATA, TOLERANCE))
    {
       // They are so, do nothing (each cell under the profile has already been initialised with deep water wave height and wave direction)
-      //       LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " has sea to " << (m_VCoast[nCoast].nGetSeaHandedness() == RIGHT_HANDED ? "right" : "left") << " dWaveToNormalAngle = " << dWaveToNormalAngle << " which is off-shore" << endl;
+      //       LogStream << m_ulIter << ": profile " << nProfile << " has sea to " << (m_VCoast[nCoast].nGetSeaHandedness() == RIGHT_HANDED ? "right" : "left") << " dWaveToNormalAngle = " << dWaveToNormalAngle << " which is off-shore" << endl;
 
       return RTN_OK;
    }
 
-   //    LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile = " << nProfile << " has sea to " << (m_VCoast[nCoast].nGetSeaHandedness() == RIGHT_HANDED ? "right" : "left") << " dWaveToNormalAngle = " << dWaveToNormalAngle << " which is " << (dWaveToNormalAngle < 0 ? "DOWN" : "UP") << "-coast" << endl;
+   //    LogStream << m_ulIter << ": profile = " << nProfile << " has sea to " << (m_VCoast[nCoast].nGetSeaHandedness() == RIGHT_HANDED ? "right" : "left") << " dWaveToNormalAngle = " << dWaveToNormalAngle << " which is " << (dWaveToNormalAngle < 0 ? "DOWN" : "UP") << "-coast" << endl;
 
    // Calculate the angle between the deep water wave direction and a normal to the coast tangent for the previous coast point
    double dWaveToNormalAnglePrev;
@@ -801,7 +799,7 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
       if (nRet != RTN_OK)
       {
          // Could not create the profile elevation vectors
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): could not create CShore profile elevation vectors for profile " << nProfile << endl;
+         LogStream << m_ulIter << ": could not create CShore profile elevation vectors for profile " << nProfile << endl;
 
          return nRet;
       }
@@ -809,7 +807,7 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
       if (VdProfileDistXY.empty())
       {
          // The profile elevation vector was created, but was not populated
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): could not populate CShore profile elevation vector for profile " << nProfile << endl;
+         LogStream << m_ulIter << ": could not populate CShore profile elevation vector for profile " << nProfile << endl;
 
          return RTN_ERR_CSHORE_EMPTY_PROFILE;
       }
@@ -896,9 +894,6 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
 
          strErr += "(coast " + to_string(nCoast) + " profile " + to_string(nProfile) + ")\n";
          
-         if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-            LogStream << strErr;
-
          if (nRet < -1)
          {
             // This is serious, so give up for this profile
@@ -1029,7 +1024,7 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
       {
          // CShore sometimes returns only one row of results, which contains data only for the seaward point of the profile. This happens when all other (more coastward) points give an invalid result during CShore's calculations. This is a problem. We don't want to abandon the simulation just because of this, so instead we just put some dummy data into the second row, and carry on with these two rows. The profile will get ignored later, since it is too small to be useful
          if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << WARN << "for coast " << nCoast << " profile " << nProfile << ", only " << nOutSize << " CShore output row" << endl;
+            LogStream << m_ulIter << ": " << WARN << "for coast " << nCoast << " profile " << nProfile << ", only " << nOutSize << " CShore output row" << endl;
 
          // Set dummy data in the second row
          VdXYDistFromCShoreOut[1] = 1e-5;    // Dummy data, must not be the same as VdXYDistFromCShoreOut[0] tho', or get crash in linear interpolation routine
@@ -1077,9 +1072,6 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
 
          strErr += "(coast " + to_string(nCoast) + " profile " + to_string(nProfile) + " profile length " + to_string(nOutSize) + ")\n";
          
-         if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-            LogStream << strErr;
-
          if (nRet < -1)
          {
             // This is serious, so give up for this profile
@@ -1204,7 +1196,7 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
             dProfileBreakingDepth = m_pRasterGrid->m_Cell[nX][nY].dGetSeaDepth(); // Water depth for the cell 'under' this point in the profile
             nProfileBreakingDist = nProfilePoint + 1;                             // At the nearest point nProfilePoint = 0, so, plus one
 
-            //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): CShore breaking at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "} nProfile = " << nProfile << ", nProfilePoint = " << nProfilePoint << ", dBreakingWaveHeight = " << dBreakingWaveHeight << ", dBreakingWaveAngle = " << dBreakingWaveAngle << ", dProfileBreakingDepth = " << dProfileBreakingDepth << ", nProfileBreakingDist = " << nProfileBreakingDist << endl;
+            //             LogStream << m_ulIter << ": CShore breaking at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "} nProfile = " << nProfile << ", nProfilePoint = " << nProfilePoint << ", dBreakingWaveHeight = " << dBreakingWaveHeight << ", dBreakingWaveAngle = " << dBreakingWaveAngle << ", dProfileBreakingDepth = " << dProfileBreakingDepth << ", nProfileBreakingDist = " << nProfileBreakingDist << endl;
          }
 
          VbWaveIsBreaking[nProfilePoint] = bBreaking;
@@ -1434,7 +1426,7 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
       m_VCoast[nCoast].SetDepthOfBreaking(nCoastPoint, dProfileBreakingDepth);
       m_VCoast[nCoast].SetBreakingDistance(nCoastPoint, nProfileBreakingDist);
 
-      //       LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " in active zone, dBreakingWaveHeight = " << dBreakingWaveHeight << endl;
+      //       LogStream << m_ulIter << ": nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " in active zone, dBreakingWaveHeight = " << dBreakingWaveHeight << endl;
    }
    else
    {
@@ -1444,7 +1436,7 @@ int CSimulation::nCalcWavePropertiesOnProfile(int const nCoast, int const nCoast
       m_VCoast[nCoast].SetDepthOfBreaking(nCoastPoint, DBL_NODATA);
       m_VCoast[nCoast].SetBreakingDistance(nCoastPoint, INT_NODATA);
 
-      //       LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " NOT in active zone" << endl;      
+      //       LogStream << m_ulIter << ": nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " NOT in active zone" << endl;
    }
 
    return RTN_OK;
@@ -1462,7 +1454,7 @@ int CSimulation::nCreateCShoreInfile(int const nCoast, int const nProfile, int c
    if (CShoreOutStream.fail())
    {
       // Error, cannot open file for writing
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ERR << "cannot write to CShore input file '" << CSHORE_INFILE << "'" << endl;
+      LogStream << m_ulIter << ": " << ERR << "cannot write to CShore input file '" << CSHORE_INFILE << "'" << endl;
       return RTN_ERR_CSHORE_FILE_INPUT;
    }
 
@@ -1589,7 +1581,7 @@ int CSimulation::nGetThisProfileElevationVectorsForCShore(int const nCoast, int 
             VdVZ->push_back(0.5);      // TODO 053 Set it to a smal +ve elevation. However there must be a better way of doing this
             
             // Could not create the profile elevation vectors
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): landward location is negative. Changing for CShore profile elevation vector " << nProfile << endl;
+            LogStream << m_ulIter << ": landward location is negative. Changing for CShore profile elevation vector " << nProfile << endl;
          }
          else
          {
@@ -1641,7 +1633,7 @@ int CSimulation::nReadCShoreOutput(int const nProfile, string const *strCShoreFi
    if (! InStream.is_open())
    {
       // Error: cannot open CShore file for input
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ERR << "for profile " << nProfile << ", cannot open " << *strCShoreFilename << " for input" << endl;
+      LogStream << m_ulIter << ": " << ERR << "for profile " << nProfile << ", cannot open " << *strCShoreFilename << " for input" << endl;
 
       return RTN_ERR_READING_CSHORE_FILE_OUTPUT;
    }
@@ -1684,7 +1676,7 @@ int CSimulation::nReadCShoreOutput(int const nProfile, string const *strCShoreFi
          if (nCols != nExpectedColumns)
          {
             // Error: did not read the expected number of CShore output columns
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ERR << "for profile " << nProfile << ", expected " << nExpectedColumns << " CShore output columns but read " << nCols << " columns from header section of file " << *strCShoreFilename << endl;
+            LogStream << m_ulIter << ": " << ERR << "for profile " << nProfile << ", expected " << nExpectedColumns << " CShore output columns but read " << nCols << " columns from header section of file " << *strCShoreFilename << endl;
 
             return RTN_ERR_READING_CSHORE_FILE_OUTPUT;
          }
@@ -1700,7 +1692,7 @@ int CSimulation::nReadCShoreOutput(int const nProfile, string const *strCShoreFi
    if (nReadRows != nExpectedRows)
    {
       // Error: did not get nExpectedRows CShore output rows
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ERR << "for profile " << nProfile << ", expected " << nExpectedRows << " CShore output rows, but read " << nReadRows << " rows from file " << *strCShoreFilename << endl;
+      LogStream << m_ulIter << ": " << ERR << "for profile " << nProfile << ", expected " << nExpectedRows << " CShore output rows, but read " << nReadRows << " rows from file " << *strCShoreFilename << endl;
 
       return RTN_ERR_READING_CSHORE_FILE_OUTPUT;
    }
@@ -1709,7 +1701,7 @@ int CSimulation::nReadCShoreOutput(int const nProfile, string const *strCShoreFi
    {
       // CShore sometimes returns only one row, which contains data for the seaward point of the profile. This happens when all other (more coastward) points give an invalid result during CShore's calculations. This is a problem. We don't want to abandon the simulation just because of this, so instead we just duplicate the row, so that the profile will later get marked as invalid
       if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << WARN << "for profile " << nProfile << ", only " << nReadRows << " CShore output rows in file " << *strCShoreFilename << endl;
+         LogStream << m_ulIter << ": " << WARN << "for profile " << nProfile << ", only " << nReadRows << " CShore output rows in file " << *strCShoreFilename << endl;
 
       // Duplicate the data
       VdXYDistCShore.push_back(VdXYDistCShore[0]);
@@ -1848,7 +1840,7 @@ void CSimulation::ModifyBreakingWavePropertiesWithinShadowZoneToCoastline(int co
       m_VCoast[nCoast].SetDepthOfBreaking(nThisCoastPoint, dThisBreakingDepth);
       m_VCoast[nCoast].SetBreakingDistance(nThisCoastPoint, nThisBreakingDist);
 
-      //       LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " in active zone, dBreakingWaveHeight = " << dBreakingWaveHeight << endl;
+      //       LogStream << m_ulIter << ": nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " in active zone, dBreakingWaveHeight = " << dBreakingWaveHeight << endl;
    }
    else if (bProfileIsinShadowZone && (! bModfiedWaveHeightisBreaking))
    {
@@ -1858,7 +1850,7 @@ void CSimulation::ModifyBreakingWavePropertiesWithinShadowZoneToCoastline(int co
       m_VCoast[nCoast].SetDepthOfBreaking(nThisCoastPoint, DBL_NODATA);
       m_VCoast[nCoast].SetBreakingDistance(nThisCoastPoint, INT_NODATA);
 
-      //       LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " NOT in active zone" << endl;
+      //       LogStream << m_ulIter << ": nProfile = " << nProfile << ", nCoastPoint = " << nCoastPoint << " NOT in active zone" << endl;
    }
 
    return;
@@ -1937,7 +1929,7 @@ void CSimulation::InterpolateWavePropertiesBetweenProfiles(int const nCoast, int
    if ((bFPIsEqual(dThisBreakingWaveHeight, DBL_NODATA, TOLERANCE)) && (bFPIsEqual(dNextBreakingWaveHeight, DBL_NODATA, TOLERANCE)))
    {
       if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): both profile " << nProfile << " at coast point " << nThisCoastPoint << ", and profile " << nNextProfile << " at coast point " << nNextCoastPoint << ", are not in the active zone" << endl;
+         LogStream << m_ulIter << ": both profile " << nProfile << " at coast point " << nThisCoastPoint << ", and profile " << nNextProfile << " at coast point " << nNextCoastPoint << ", are not in the active zone" << endl;
       
       // Set the breaking wave height, breaking wave angle, and depth of breaking to DBL_NODATA
       for (int n = nThisCoastPoint; n < nNextCoastPoint; n++)
@@ -2143,7 +2135,7 @@ void CSimulation::CalcCoastTangents(int const nCoast)
          m_VCoast[nCoast].SetFluxOrientation(nCoastPoint, dAzimuthAngle);
       }
 
-      //      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nCoastPoint = " << nCoastPoint << " FluxOrientation = " << m_VCoast[nCoast].dGetFluxOrientation(nCoastPoint) << endl;
+      //      LogStream << m_ulIter << ": nCoastPoint = " << nCoastPoint << " FluxOrientation = " << m_VCoast[nCoast].dGetFluxOrientation(nCoastPoint) << endl;
    }
 }
 
@@ -2169,7 +2161,7 @@ void CSimulation::CalcD50AndFillWaveCalcHoles(void)
 
             if (bActive)
             {
-               // It is in the active zone. Does it have unconsolidated sediment on it?
+               // It is in the active zone. Does it have unconsolidated sediment on it? Test this using the UnconD50 value: if dGetUnconsD50() returns DBL_NODATA, there is no unconsolidated sediment
                double dTmpd50 = m_pRasterGrid->m_Cell[nX][nY].dGetUnconsD50();
                if (! bFPIsEqual(dTmpd50, DBL_NODATA, TOLERANCE))
                {

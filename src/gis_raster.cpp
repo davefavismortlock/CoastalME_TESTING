@@ -242,8 +242,8 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
 
    if (! bFound)
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): north (top) " << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": north (top) edge of bounding box not found" << endl;
       return RTN_ERR_BOUNDING_BOX;
    }
 
@@ -268,8 +268,8 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
 
    if (! bFound)
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): east (right) edge of bounding box not found" << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": east (right) edge of bounding box not found" << endl;
       return RTN_ERR_BOUNDING_BOX;
    }
 
@@ -294,8 +294,8 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
 
    if (! bFound)
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): south (bottom) edge of bounding box not found" << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": south (bottom) edge of bounding box not found" << endl;
       return RTN_ERR_BOUNDING_BOX;
    }
 
@@ -320,8 +320,8 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
 
    if (! bFound)
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): west (left) edge of bounding box not found" << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": west (left) edge of bounding box not found" << endl;
       return RTN_ERR_BOUNDING_BOX;
    }
 
@@ -350,7 +350,7 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
       if (! bFound)
       {
          if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): could not find a bounding box edge cell for grid column " << nX << endl;
+            LogStream << m_ulIter << ": could not find a bounding box edge cell for grid column " << nX << endl;
          return RTN_ERR_BOUNDING_BOX;
       }
    }
@@ -380,7 +380,7 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
       if (! bFound)
       {
          if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): could not find a bounding box edge cell for grid row " << nY << endl;
+            LogStream << m_ulIter << ": could not find a bounding box edge cell for grid row " << nY << endl;
          return RTN_ERR_BOUNDING_BOX;
       }
    }
@@ -410,7 +410,7 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
       if (! bFound)
       {
          if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): could not find a bounding box edge cell for grid column " << nX << endl;
+            LogStream << m_ulIter << ": could not find a bounding box edge cell for grid column " << nX << endl;
          return RTN_ERR_BOUNDING_BOX;
       }
    }
@@ -440,7 +440,7 @@ int CSimulation::nMarkBoundingBoxEdgeCells(void)
       if (! bFound)
       {
          if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): could not find a bounding box edge cell for grid row " << nY << endl;
+            LogStream << m_ulIter << ": could not find a bounding box edge cell for grid row " << nY << endl;
          return RTN_ERR_BOUNDING_BOX;
       }
    }
@@ -1210,6 +1210,10 @@ bool CSimulation::bWriteRasterGISFile(int const nDataItem, string const *strPlot
       strFilePathName.append(m_strGDALRasterOutputDriverExtension);
    }
 
+   // TODO 065 Used to try to debug floating point exception in pDriver->Create() below
+   // CPLSetConfigOption("CPL_DEBUG", "ON");
+   // CPLSetConfigOption("GDAL_NUM_THREADS", "1");
+
    GDALDriver* pDriver;
    GDALDataset* pDataSet;
    if (m_bGDALCanCreate)
@@ -1220,6 +1224,11 @@ bool CSimulation::bWriteRasterGISFile(int const nDataItem, string const *strPlot
       if ((nDataItem == RASTER_PLOT_INUNDATION_MASK) || (nDataItem == RASTER_PLOT_SETUP_SURGE_FLOOD_MASK) || (nDataItem == RASTER_PLOT_SETUP_SURGE_RUNUP_FLOOD_MASK))
       {
          pDataSet = pDriver->Create(strFilePathName.c_str(), m_nXGridMax, m_nYGridMax, 1, GDT_Int16, m_papszGDALRasterOptions);
+      }
+      else if (m_strRasterGISOutFormat == "gpkg")
+      {
+         // TODO 065 Floating point exception here
+         pDataSet = pDriver->Create(strFilePathName.c_str(), m_nXGridMax, m_nYGridMax, 1, GDT_Byte, m_papszGDALRasterOptions);
       }
       else
       {
@@ -1255,8 +1264,7 @@ bool CSimulation::bWriteRasterGISFile(int const nDataItem, string const *strPlot
 
    // Set geotransformation info for output dataset (will be same as was read in from DEM)
    if (CE_Failure == pDataSet->SetGeoTransform(m_dGeoTransform))
-      LogStream << WARN << "cannot write geotransformation information to " << m_strRasterGISOutFormat << " file named " << strFilePathName << "\n"
-                << CPLGetLastErrorMsg() << endl;
+      LogStream << WARN << "cannot write geotransformation information to " << m_strRasterGISOutFormat << " file named " << strFilePathName << "\n" << CPLGetLastErrorMsg() << endl;
 
    // Allocate memory for a 1D array, to hold the floating point raster band data for GDAL
    double* pdRaster = new double[m_ulNumCells];
@@ -1268,9 +1276,8 @@ bool CSimulation::bWriteRasterGISFile(int const nDataItem, string const *strPlot
    }
 
    bool bScaleOutput = false;
-   double
-       dRangeScale = 0,
-       dDataMin = 0;
+   double dRangeScale = 0;
+   double dDataMin = 0;
 
    if (! m_bGDALCanWriteFloat)
    {
@@ -1510,7 +1517,7 @@ bool CSimulation::bWriteRasterGISFile(int const nDataItem, string const *strPlot
                else
                {
                   // Get total volume (all sediment size classes) of change in sediment for this polygon for this timestep (-ve erosion, +ve deposition)
-                  dTmp = m_pVCoastPolygon[nPoly]->dGetDepositionAllUncons() * m_dCellArea;
+                  dTmp = m_pVCoastPolygon[nPoly]->dGetBeachDepositionAndSuspensionAllUncons() * m_dCellArea;
 
                   // Calculate the rate in m^3 / sec
                   dTmp /= (m_dTimeStep * 3600);
@@ -2267,8 +2274,8 @@ int CSimulation::nInterpolateAllDeepWaterWaveValues(void)
    pOptions->nMinPoints = 0;
    pOptions->dfNoDataValue = m_nMissingValue;
 
-   //    CPLSetConfigOption("CPL_DEBUG", "ON");
-   //    CPLSetConfigOption("GDAL_NUM_THREADS", "1");
+   // CPLSetConfigOption("CPL_DEBUG", "ON");
+   // CPLSetConfigOption("GDAL_NUM_THREADS", "1");
 
    // OK, now create a gridded version of wave height: first create the GDAL context
    //    GDALGridContext* pContext = GDALGridContextCreate(GGA_InverseDistanceToAPower, pOptions, nUserPoints, &m_VdDeepWaterWaveStationX[0], &m_VdDeepWaterWaveStationY[0], &m_VdThisIterDeepWaterWaveStationHeight[0], true);

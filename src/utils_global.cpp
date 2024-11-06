@@ -118,16 +118,19 @@ string strDbl(double const dX, int const nDigits)
 //===============================================================================================================================
 //! Converts double to string with specified number of decimal places, within a field of given width, pads with blank spaces to enforce right alignment. Modified from https://stackoverflow.com/questions/14765155/how-can-i-easily-format-my-data-table-in-c
 //===============================================================================================================================
-string strDblRight(double const dX, int const nDigits, int const nWidth, bool bShowZero)
+string strDblRight(double const dX, int const nDigits, int const nWidth, bool const bShowDash)
 {
    stringstream ss;
    ss << std::fixed << std::right;
    ss.fill(' ');
    ss.width(nWidth-1);
    
-   if (bFPIsEqual(dX, 0.0, TOLERANCE) && (! bShowZero))
+   if (bFPIsEqual(dX, 0.0, TOLERANCE))
    {
-      ss << "-";      
+      if (bShowDash)
+         ss << "-";
+      else
+         ss << SPACE;
    }
    else
    {
@@ -200,32 +203,44 @@ string strLeft(string const strIn, int const nWidth)
 }
 
 //===============================================================================================================================
-//! Calculates a percentage from two numbers then, if the result is non-zero, right-aligns the result as a string within a field of given width, pads with blank spaces to enforce alignment. From https://stackoverflow.com/questions/14765155/how-can-i-easily-format-my-data-table-in-c
+//! Calculates a percentage from two numbers then, if the result is non-zero, right-aligns the result as a string within a field of given width, pads with blank spaces to enforce alignment. Modified from https://stackoverflow.com/questions/14765155/how-can-i-easily-format-my-data-table-in-c
 //===============================================================================================================================
-string strRightPerCent(double const d1, double const d2, int const nWidth)
+string strRightPerCent(double const d1, double const d2, int const nWidth, int const nDigits, bool const bShowDash)
 {
+   stringstream ss;
+   ss << std::fixed << std::right;
+
    // Are either of the inputs zero?
-   if (bFPIsEqual(d1, 0.0, TOLERANCE))
-      return string(nWidth, SPACE);
-      
-   if (bFPIsEqual(d2, 0.0, TOLERANCE))
-      return string(nWidth, SPACE);
-      
-   // Non-zero, so calculate the percentage
-   double dResult = 100 * d1 / d2;
-   
-   char cBuffer[10];
-   sprintf(cBuffer, "%+.2f", dResult);
-   string strResult = cBuffer;
-   
-   stringstream ss, spaces;
-   int nPadding = nWidth - static_cast<int>(strResult.size()) - 4;
-   for (int i = 0; i < nPadding; ++i)
-      spaces << " ";
-   ss << spaces.str();
-   ss << "(";
-   ss << strResult;
-   ss << "%)";
+   if ((bFPIsEqual(d1, 0.0, TOLERANCE)) || (bFPIsEqual(d2, 0.0, TOLERANCE)))
+   {
+      ss.fill(' ');
+      ss.width(nWidth-1);
+
+      if (bShowDash)
+         ss << "-";
+      else
+         ss << SPACE;
+   }
+   else
+   {
+      // Non-zero, so calculate the percentage
+      double dResult = 100 * d1 / d2;
+
+      stringstream ssResult;
+      ssResult << std::fixed << std::right;
+      ssResult.precision(nDigits);
+      ssResult << "(" << dResult << "%)";
+
+      long int nResultWidth = ssResult.str().size();
+
+      for (int i = 0; i < (nWidth - nResultWidth - 1); i++)
+         ss << SPACE;
+
+      ss << ssResult.str();
+   }
+
+   // Append a final space
    ss << " ";
+
    return ss.str();
 }

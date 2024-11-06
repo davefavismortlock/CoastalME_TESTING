@@ -62,8 +62,8 @@ bool bCurvaturePairCompareDescending(const pair<int, double> &prLeft, const pair
 //===============================================================================================================================
 int CSimulation::nCreateAllProfiles(void)
 {
-   if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): Creating profiles" << endl;
+   if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
+      LogStream << m_ulIter << ": Creating profiles" << endl;
    
    int nProfileToNodeSpacing = m_nCoastNormalAvgSpacing / 2;
 
@@ -127,8 +127,8 @@ int CSimulation::nCreateAllProfiles(void)
       if (tAbs(dStdCurvature) < TOLERANCE)
          dCoastProfileSmoothConvexityThreshold = -DBL_MAX;
 
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): convexity threshold = " << dCoastProfileSmoothConvexityThreshold << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": Convexity threshold = " << dCoastProfileSmoothConvexityThreshold << endl;
 
       // Now create normal profiles on either side of points of maximum smoothed convexity
       CreateRestOfNormalProfiles(nCoast, nProfile, nProfileToNodeSpacing, dCoastProfileSmoothConvexityThreshold, &bVCoastPointSearched, &prVCurvature);
@@ -220,7 +220,7 @@ int CSimulation::nCreateAllProfilesAndCheckForIntersection(void)
             if (m_pRasterGrid->m_Cell[nXEnd][nYEnd].dGetSeaDepth() < m_dDepthOfClosure)
             {
                if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-                  LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProf << " is invalid, is too short for depth of closure " << m_dDepthOfClosure << " at end point [" << nXEnd << "][" << nYEnd << "] = {" << pPtEnd->dGetX() << ", " << pPtEnd->dGetY() << "}, flagging as too short" << endl;
+                  LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProf << " is invalid, is too short for depth of closure " << m_dDepthOfClosure << " at end point [" << nXEnd << "][" << nYEnd << "] = {" << pPtEnd->dGetX() << ", " << pPtEnd->dGetY() << "}, flagging as too short" << endl;
 
                pProfile->SetTooShort(true);
             }
@@ -288,8 +288,8 @@ void CSimulation::CreateInterventionProfiles(int const nCoast, int &nProfile /*,
          CGeom2DIPoint PtiThis = *m_VCoast[nCoast].pPtiGetCellMarkedAsCoastline(nThisCapePoint);
          CGeom2DPoint PtThis = *m_VCoast[nCoast].pPtGetCoastlinePointExtCRS(nThisCapePoint);
 
-         if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << " profile " << nProfile << " (intervention cape) created at coast point " << nThisCapePoint << " [" << PtiThis.nGetX() << "][" << PtiThis.nGetY() << "] = {" << PtThis.dGetX() << ", " << PtThis.dGetY() << "} (smoothed curvature = " << m_VCoast[nCoast].dGetSmoothCurvature(nThisCapePoint) << ", detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisCapePoint) << ")" << endl;
+         if (m_nLogFileDetail >= LOG_FILE_ALL)
+            LogStream << m_ulIter << ": Coast " << nCoast << " profile " << nProfile << " intervention cape created at coast point " << nThisCapePoint << " [" << PtiThis.nGetX() << "][" << PtiThis.nGetY() << "] = {" << PtThis.dGetX() << ", " << PtThis.dGetY() << "} (smoothed curvature = " << m_VCoast[nCoast].dGetSmoothCurvature(nThisCapePoint) << ", detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisCapePoint) << ")" << endl;
 
          // Mark points on either side of it
          //          for (int m = 1; m < nProfileToNodeSpacing; m++)
@@ -345,8 +345,8 @@ void CSimulation::CreateNaturalCapeNormalProfiles(int const nCoast, int &nProfil
          CGeom2DIPoint PtiThis = *m_VCoast[nCoast].pPtiGetCellMarkedAsCoastline(nThisCapePoint);
          CGeom2DPoint PtThis = *m_VCoast[nCoast].pPtGetCoastlinePointExtCRS(nThisCapePoint);
 
-         if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << " profile " << nProfile << " (natural cape) created at coast point " << nThisCapePoint << " [" << PtiThis.nGetX() << "][" << PtiThis.nGetY() << "] = {" << PtThis.dGetX() << ", " << PtThis.dGetY() << "} (smoothed curvature = " << m_VCoast[nCoast].dGetSmoothCurvature(nThisCapePoint) << ", detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisCapePoint) << ")" << endl;
+         if (m_nLogFileDetail >= LOG_FILE_ALL)
+            LogStream << m_ulIter << ": Coast " << nCoast << " profile " << nProfile << " natural cape created at coast point " << nThisCapePoint << " [" << PtiThis.nGetX() << "][" << PtiThis.nGetY() << "] = {" << PtThis.dGetX() << ", " << PtThis.dGetY() << "} (smoothed curvature = " << m_VCoast[nCoast].dGetSmoothCurvature(nThisCapePoint) << ", detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisCapePoint) << ")" << endl;
 
          // Mark points on either side of it
          for (int m = 1; m < nProfileToNodeSpacing; m++)
@@ -404,7 +404,7 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
          else
             nProfileStartPoint = nPossibleNodePoint - nProfileDist;
 
-         //          LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << (nDirection == DIRECTION_DOWNCOAST ? "DOWN" : "UP") << "-coast, nProfileStartPoint = " << nProfileStartPoint << " nPossibleNodePoint = " << nPossibleNodePoint << endl;
+         //          LogStream << m_ulIter << ": " << (nDirection == DIRECTION_DOWNCOAST ? "DOWN" : "UP") << "-coast, nProfileStartPoint = " << nProfileStartPoint << " nPossibleNodePoint = " << nPossibleNodePoint << endl;
 
          // Now do the search
          bool bNodeNoGood = false;
@@ -424,7 +424,7 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
             if ((nThisPoint <= 0) || (nThisPoint >= nCoastSize - 1))
             {
                // We have hit the beginning or end of the coastline
-               //                LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nThisPoint = " << nThisPoint << " hit beginning or end of coastline" << endl;
+               //                LogStream << m_ulIter << ": nThisPoint = " << nThisPoint << " hit beginning or end of coastline" << endl;
 
                bNodeNoGood = true;
                break;
@@ -433,7 +433,7 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
             // Have we already searched this point?
             if (bVCoastPointSearched->at(nThisPoint))
             {
-               //                LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nThisPoint = " << nThisPoint << " already searched" << endl;
+               //                LogStream << m_ulIter << ": nThisPoint = " << nThisPoint << " already searched" << endl;
 
                bNodeNoGood = true;
                break;
@@ -445,7 +445,7 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
             if (m_VCoast[nCoast].bIsProfileStartPoint(nThisPoint))
             {
                // We have hit the start point of another profile
-               //                LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nThisPoint = " << nThisPoint<< " hit start of another profile, profile " << m_VCoast[nCoast].nGetProfileNumber(nThisPoint) << endl;
+               //                LogStream << m_ulIter << ": nThisPoint = " << nThisPoint<< " hit start of another profile, profile " << m_VCoast[nCoast].nGetProfileNumber(nThisPoint) << endl;
 
                bNodeNoGood = true;
                break;
@@ -454,7 +454,7 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
             // Is this coastline point the correct distance from the max-concave point?
             if (nThisPoint == nProfileStartPoint)
             {
-               //                LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nThisPoint = " << nThisPoint << ", at nProfileStartPoint" << endl;
+               //                LogStream << m_ulIter << ": nThisPoint = " << nThisPoint << ", at nProfileStartPoint" << endl;
 
                // It is, so we may be able to place a normal here, but first do some checks
                bool bTooClose = false;
@@ -492,7 +492,7 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
                   else
                      nProfileStartPoint--;
 
-                  //                   LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): excessive detailed convexity = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisPoint) << " (convexity threshold = " << dCoastProfileSmoothConvexityThreshold << ") at nThisPoint = " << nThisPoint << " when attempting to create nProfile = " << nProfile+1 << ", possible nProfileStartPoint changed to " << nProfileStartPoint << endl;
+                  //                   LogStream << m_ulIter << ": Excessive detailed convexity = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisPoint) << " (convexity threshold = " << dCoastProfileSmoothConvexityThreshold << ") at nThisPoint = " << nThisPoint << " when attempting to create nProfile = " << nProfile+1 << ", possible nProfileStartPoint changed to " << nProfileStartPoint << endl;
 
                   continue;
                }
@@ -505,15 +505,15 @@ void CSimulation::CreateRestOfNormalProfiles(int const nCoast, int &nProfile, in
                   CGeom2DIPoint PtiThis = *m_VCoast[nCoast].pPtiGetCellMarkedAsCoastline(nThisPoint);
                   CGeom2DPoint PtThis = *m_VCoast[nCoast].pPtGetCoastlinePointExtCRS(nThisPoint);
 
-                  if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                     LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << " profile " << nProfile << " created at coast point " << nThisPoint << " [" << PtiThis.nGetX() << "][" << PtiThis.nGetY() << "] = {" << PtThis.dGetX() << ", " << PtThis.dGetY() << "} (smoothed curvature = " << m_VCoast[nCoast].dGetSmoothCurvature(nThisPoint) << ", detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisPoint) << ")" << endl;
+                  if (m_nLogFileDetail >= LOG_FILE_ALL)
+                     LogStream << m_ulIter << ": Coast " << nCoast << " profile " << nProfile << " created at coast point " << nThisPoint << " [" << PtiThis.nGetX() << "][" << PtiThis.nGetY() << "] = {" << PtThis.dGetX() << ", " << PtThis.dGetY() << "} (smoothed curvature = " << m_VCoast[nCoast].dGetSmoothCurvature(nThisPoint) << ", detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nThisPoint) << ")" << endl;
 
                   //                   LogStream << "\tSearch started from potential node point at coastline point " << nPossibleNodePoint << " which has detailed curvature = " << m_VCoast[nCoast].dGetDetailedCurvature(nPossibleNodePoint) << endl;
                }
                else
                {
                   // Uh-oh, this profile is no good (end is off-grid) so keep going
-                  //                   LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile+1 << " NOT created at nThisPoint = " << nThisPoint << endl;
+                  //                   LogStream << m_ulIter << ": profile " << nProfile+1 << " NOT created at nThisPoint = " << nThisPoint << endl;
 
                   bNodeNoGood = true;
                }
@@ -556,8 +556,8 @@ int CSimulation::nCreateProfile(int const nCoast, int const nProfileStartPoint, 
    // Safety check: is the end point in the contiguous sea?
    if (! m_pRasterGrid->m_Cell[nXEnd][nYEnd].bIsInContiguousSea())
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", possible profile with start point " << nProfileStartPoint << " has inland end point at [" << nXEnd << "][" << nYEnd << "] = {" << dGridCentroidXToExtCRSX(nXEnd) << ", " << dGridCentroidYToExtCRSY(nYEnd) << "}, ignoring" << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": coast " << nCoast << ", possible profile with start point " << nProfileStartPoint << " has inland end point at [" << nXEnd << "][" << nYEnd << "] = {" << dGridCentroidXToExtCRSX(nXEnd) << ", " << dGridCentroidYToExtCRSY(nYEnd) << "}, ignoring" << endl;
 
       return RTN_ERR_PROFILE_ENDPOINT_IS_INLAND;
    }
@@ -565,8 +565,8 @@ int CSimulation::nCreateProfile(int const nCoast, int const nProfileStartPoint, 
    // Safety check: is the water depth at the end point less than the depth of closure?
    if (m_pRasterGrid->m_Cell[nXEnd][nYEnd].dGetSeaDepth() < m_dDepthOfClosure)
    {
-      if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", possible profile with start point " << nProfileStartPoint << " is too short for depth of closure " << m_dDepthOfClosure << " at end point [" << nXEnd << "][" << nYEnd << "] = {" << dGridCentroidXToExtCRSX(nXEnd) << ", " << dGridCentroidYToExtCRSY(nYEnd) << "}, ignoring" << endl;
+      if (m_nLogFileDetail >= LOG_FILE_ALL)
+         LogStream << m_ulIter << ": coast " << nCoast << ", possible profile with start point " << nProfileStartPoint << " is too short for depth of closure " << m_dDepthOfClosure << " at end point [" << nXEnd << "][" << nYEnd << "] = {" << dGridCentroidXToExtCRSX(nXEnd) << ", " << dGridCentroidYToExtCRSY(nYEnd) << "}, ignoring" << endl;
 
       return RTN_ERR_PROFILE_END_INSUFFICIENT_DEPTH;
    }
@@ -586,7 +586,7 @@ int CSimulation::nCreateProfile(int const nCoast, int const nProfileStartPoint, 
    pProfile->AppendLineSegment();
    pProfile->AppendCoincidentProfileToLineSegments(make_pair(nProfile, 0));
 
-   //    LogStream << std::fixed << m_ulIter << ": profile " << nProfile << " created at coast point (" << nProfileStartPoint << ") from [" << PtStart.dGetX() << "][" << PtStart.dGetY() << "] to [" << PtEnd.dGetX() << "][" << PtEnd.dGetY() << "]" << endl;
+   //    LogStream << std::fixed << m_ulIter << ": Profile " << nProfile << " created at coast point (" << nProfileStartPoint << ") from [" << PtStart.dGetX() << "][" << PtStart.dGetY() << "] to [" << PtEnd.dGetX() << "][" << PtEnd.dGetY() << "]" << endl;
 
    return RTN_OK;
 }
@@ -596,11 +596,10 @@ int CSimulation::nCreateProfile(int const nCoast, int const nProfileStartPoint, 
 //===============================================================================================================================
 int CSimulation::nCreateGridEdgeProfile(bool const bCoastStart, int const nCoast, int &nProfile)
 {
-   int
-       nCoastSize = m_VCoast[nCoast].nGetCoastlineSize(),
-       nHandedness = m_VCoast[nCoast].nGetSeaHandedness(),
-       nProfileLen = nRound(m_dCoastNormalLength / m_dCellSide), // Profile length in grid CRS
-       nProfileStartEdge;
+   int nCoastSize = m_VCoast[nCoast].nGetCoastlineSize();
+   int nHandedness = m_VCoast[nCoast].nGetSeaHandedness();
+   int nProfileLen = nRound(m_dCoastNormalLength / m_dCellSide);  // Profile length in grid CRS
+   int nProfileStartEdge;
 
    CGeom2DIPoint PtiProfileStart; // In grid CRS
    CGeomProfile* pProfile = NULL;
@@ -627,7 +626,7 @@ int CSimulation::nCreateGridEdgeProfile(bool const bCoastStart, int const nCoast
    {
       // Not found. This can happen because of rounding problems, i.e. the cell which was stored as the first cell of the raster coastline
       if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ERR << " when constructing start-of-coast profile, [" << PtiProfileStart.nGetX() << "][" << PtiProfileStart.nGetY() << "] = {" << dGridCentroidXToExtCRSX(PtiProfileStart.nGetX()) << ", " << dGridCentroidYToExtCRSY(PtiProfileStart.nGetY()) << "} not found in list of edge cells" << endl;
+         LogStream << m_ulIter << ": " << ERR << " when constructing start-of-coast profile, [" << PtiProfileStart.nGetX() << "][" << PtiProfileStart.nGetY() << "] = {" << dGridCentroidXToExtCRSX(PtiProfileStart.nGetX()) << ", " << dGridCentroidYToExtCRSY(PtiProfileStart.nGetY()) << "} not found in list of edge cells" << endl;
 
       return RTN_ERR_COAST_CANT_FIND_EDGE_CELL;
    }
@@ -761,8 +760,8 @@ int CSimulation::nCreateGridEdgeProfile(bool const bCoastStart, int const nCoast
    pProfile->AppendLineSegment();
    pProfile->AppendCoincidentProfileToLineSegments(make_pair(nProfile, 0));
 
-   if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " created at coast " << (bCoastStart ? "start" : "end") << " point " << (bCoastStart ? 0 : nCoastSize - 1) << ", from [" << PtiProfileStart.nGetX() << "][" << PtiProfileStart.nGetY() << "] = {" << dGridCentroidXToExtCRSX(PtiProfileStart.nGetX()) << ", " << dGridCentroidYToExtCRSY(PtiProfileStart.nGetY()) << "} to [" << VPtiNormalPoints.back().nGetX() << "][" << VPtiNormalPoints.back().nGetY() << "] = {" << dGridCentroidXToExtCRSX(VPtiNormalPoints.back().nGetX()) << ", " << dGridCentroidYToExtCRSY(VPtiNormalPoints.back().nGetY()) << "}" << endl;
+   if (m_nLogFileDetail >= LOG_FILE_ALL)
+      LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProfile << " created at coast " << (bCoastStart ? "start" : "end") << " point " << (bCoastStart ? 0 : nCoastSize - 1) << ", from [" << PtiProfileStart.nGetX() << "][" << PtiProfileStart.nGetY() << "] = {" << dGridCentroidXToExtCRSX(PtiProfileStart.nGetX()) << ", " << dGridCentroidYToExtCRSY(PtiProfileStart.nGetY()) << "} to [" << VPtiNormalPoints.back().nGetX() << "][" << VPtiNormalPoints.back().nGetY() << "] = {" << dGridCentroidXToExtCRSX(VPtiNormalPoints.back().nGetX()) << ", " << dGridCentroidYToExtCRSY(VPtiNormalPoints.back().nGetY()) << "}" << endl;
 
    return RTN_OK;
 }
@@ -847,7 +846,7 @@ int CSimulation::nGetCoastNormalEndPoint(int const nCoast, int const nStartCoast
       pPtEnd->SetX(dGridCentroidXToExtCRSX(pPtiEnd->nGetX()));
       pPtEnd->SetY(dGridCentroidYToExtCRSY(pPtiEnd->nGetY()));
 
-      //       LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): changed endpoint for profile, is now [" << PtiEnd.nGetX() << "][" << PtiEnd.nGetY() << "] = {" << pPtEnd->dGetX() << ", " << pPtEnd->dGetY() << "}. The profile starts at coastline point " << nStartCoastPoint << " = {" << pPtStart->dGetX() << ", " << pPtStart->dGetY() << "}" << endl;
+      //       LogStream << m_ulIter << ": changed endpoint for profile, is now [" << PtiEnd.nGetX() << "][" << PtiEnd.nGetY() << "] = {" << pPtEnd->dGetX() << ", " << pPtEnd->dGetY() << "}. The profile starts at coastline point " << nStartCoastPoint << " = {" << pPtStart->dGetX() << ", " << pPtStart->dGetY() << "}" << endl;
       
       return RTN_ERR_PROFILE_ENDPOINT_AT_GRID_EDGE;
    }
@@ -1019,7 +1018,7 @@ int CSimulation::nModifyAllIntersectingProfiles(void)
                // Not found
                return RTN_ERR_BAD_INDEX;
 
-            //            LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): nFirst = " << nFirst << " nFirstProfile = " << nFirstProfile << endl;
+            //            LogStream << m_ulIter << ": nFirst = " << nFirst << " nFirstProfile = " << nFirstProfile << endl;
 
             // Don't modify the start- or end-of coastline normals
             CGeomProfile* pFirstProfile = m_VCoast[nCoast].pGetProfile(nFirstProfile);
@@ -1041,7 +1040,7 @@ int CSimulation::nModifyAllIntersectingProfiles(void)
 
                int nSecondProfile = m_VCoast[nCoast].nGetProfileFromAlongCoastProfileIndex(nSecond);
 
-               //               LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << (nDirection == DIRECTION_DOWNCOAST ? "down" : "up") << "-coast search, nFirst = " << nFirst << " nSecond = " << nSecond << " (profiles " << nFirstProfile << " and " << nSecondProfile << ")" << endl;
+               //               LogStream << m_ulIter << ": " << (nDirection == DIRECTION_DOWNCOAST ? "down" : "up") << "-coast search, nFirst = " << nFirst << " nSecond = " << nSecond << " (profiles " << nFirstProfile << " and " << nSecondProfile << ")" << endl;
 
                // Only check these profiles for intersection if both are problem-free
                CGeomProfile* pSecondProfile = m_VCoast[nCoast].pGetProfile(nSecondProfile);
@@ -1068,7 +1067,7 @@ int CSimulation::nModifyAllIntersectingProfiles(void)
                   int nPoint = -1;
                   if (pFirstProfile->bIsPointInProfile(dIntersectX, dIntersectY, nPoint))
                   {
-                     //                      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): ^^^^ profiles " << nFirstProfile << " and " << nSecondProfile << " intersect, but point {" << dIntersectX << ", " << dIntersectY << "} is already present in profile " << nFirstProfile << " as point " << nPoint << endl;
+                     //                      LogStream << m_ulIter << ": ^^^^ profiles " << nFirstProfile << " and " << nSecondProfile << " intersect, but point {" << dIntersectX << ", " << dIntersectY << "} is already present in profile " << nFirstProfile << " as point " << nPoint << endl;
 
                      // Truncate the second profile and merge it with the first profile
                      TruncateOneProfileRetainOtherProfile(nCoast, nSecondProfile, nFirstProfile, dIntersectX, dIntersectY, nProf2LineSeg, nProf1LineSeg, true);
@@ -1077,7 +1076,7 @@ int CSimulation::nModifyAllIntersectingProfiles(void)
                   // Is the point of intersection already present in the second profile?
                   else if (pSecondProfile->bIsPointInProfile(dIntersectX, dIntersectY, nPoint))
                   {
-                     //                      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): ^^^^ profiles " << nFirstProfile << " and " << nSecondProfile << " intersect, but point {" << dIntersectX << ", " << dIntersectY << "} is already present in profile " << nSecondProfile << " as point " << nPoint << endl;
+                     //                      LogStream << m_ulIter << ": ^^^^ profiles " << nFirstProfile << " and " << nSecondProfile << " intersect, but point {" << dIntersectX << ", " << dIntersectY << "} is already present in profile " << nSecondProfile << " as point " << nPoint << endl;
 
                      // Truncate the first profile and merge it with the second profile
                      TruncateOneProfileRetainOtherProfile(nCoast, nFirstProfile, nSecondProfile, dIntersectX, dIntersectY, nProf1LineSeg, nProf2LineSeg, true);
@@ -1099,24 +1098,24 @@ int CSimulation::nModifyAllIntersectingProfiles(void)
                         // Yes, the point of intersection is on the final line segment of both profiles, so merge the profiles seaward of the point of intersection
                         MergeProfilesAtFinalLineSegments(nCoast, nFirstProfile, nSecondProfile, nFirstProfileLineSegments, nSecondProfileLineSegments, dIntersectX, dIntersectY, dAvgEndX, dAvgEndY);
 
-                        //                         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ((nDirection == DIRECTION_DOWNCOAST) ? "down" : "up") << "-coast search, end-segment intersection between profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} at [" << dIntersectX << ", " << dIntersectY << "] in line segment [" << nProf1LineSeg << "] of " << nFirstProfileLineSegments << ", and line segment [" << nProf2LineSeg << "] of " << nSecondProfileLineSegments << ", respectively" << endl;
+                        //                         LogStream << m_ulIter << ": " << ((nDirection == DIRECTION_DOWNCOAST) ? "down" : "up") << "-coast search, end-segment intersection between profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} at [" << dIntersectX << ", " << dIntersectY << "] in line segment [" << nProf1LineSeg << "] of " << nFirstProfileLineSegments << ", and line segment [" << nProf2LineSeg << "] of " << nSecondProfileLineSegments << ", respectively" << endl;
 
                         //                         // DEBUG CODE =============================
                         //                         int nSizeTmp = pFirstProfile->nGetProfileSize();
                         //                         CGeom2DPoint PtEndTmp = *pFirstProfile->pPtGetPointInProfile(nSizeTmp-1);
                         //
-                        //                         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): end of first profile (" << nFirstProfile << ") is point " << nSizeTmp-1 << " at [" << dExtCRSXToGridX(PtEndTmp.dGetX()) << "][" << dExtCRSYToGridY(PtEndTmp.dGetY()) << "} = {" << PtEndTmp.dGetX() << ", " << PtEndTmp.dGetY() << "}" << endl;
+                        //                         LogStream << m_ulIter << ": end of first profile (" << nFirstProfile << ") is point " << nSizeTmp-1 << " at [" << dExtCRSXToGridX(PtEndTmp.dGetX()) << "][" << dExtCRSYToGridY(PtEndTmp.dGetY()) << "} = {" << PtEndTmp.dGetX() << ", " << PtEndTmp.dGetY() << "}" << endl;
                         //
                         //                         nSizeTmp = pSecondProfile->nGetProfileSize();
                         //                         PtEndTmp = *pSecondProfile->pPtGetPointInProfile(nSizeTmp-1);
                         //
-                        //                         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): end of second profile (" << nSecondProfile << ") is point " << nSizeTmp-1 << " at [" << dExtCRSXToGridX(PtEndTmp.dGetX()) << "][" << dExtCRSYToGridY(PtEndTmp.dGetY()) << "} = {" << PtEndTmp.dGetX() << ", " << PtEndTmp.dGetY() << "}" << endl;
+                        //                         LogStream << m_ulIter << ": end of second profile (" << nSecondProfile << ") is point " << nSizeTmp-1 << " at [" << dExtCRSXToGridX(PtEndTmp.dGetX()) << "][" << dExtCRSYToGridY(PtEndTmp.dGetY()) << "} = {" << PtEndTmp.dGetX() << ", " << PtEndTmp.dGetY() << "}" << endl;
                         //                         // DEBUG CODE =============================
                      }
                      else
                      {
                         // The profiles intersect, but the point of intersection is not on the final line segment of both profiles. One of the profiles will be truncated, the other profile will be retained
-                        //                         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << ((nDirection == DIRECTION_DOWNCOAST) ? "down" : "up") << "-coast search, intersection (NOT both end segments) between profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} at [" << dIntersectX << ", " << dIntersectY << "] in line segment [" << nProf1LineSeg << "] of " << nFirstProfileLineSegments << ", and line segment [" << nProf2LineSeg << "] of " << nSecondProfileLineSegments << ", respectively" << endl;
+                        //                         LogStream << m_ulIter << ": " << ((nDirection == DIRECTION_DOWNCOAST) ? "down" : "up") << "-coast search, intersection (NOT both end segments) between profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} at [" << dIntersectX << ", " << dIntersectY << "] in line segment [" << nProf1LineSeg << "] of " << nFirstProfileLineSegments << ", and line segment [" << nProf2LineSeg << "] of " << nSecondProfileLineSegments << ", respectively" << endl;
 
                         // Decide which profile to truncate, and which to retain
                         if (nFirstProfileLineSegments > nSecondProfileLineSegments)
@@ -1269,7 +1268,7 @@ int CSimulation::nPutAllProfilesOntoGrid(void)
             pProfile->SetTooShort(true);
 
             if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-               LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " is invalid, has only " << nPoints << " points" << endl;
+               LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProfile << " is invalid, has only " << nPoints << " points" << endl;
 
             continue;
          }
@@ -1307,12 +1306,12 @@ int CSimulation::nPutAllProfilesOntoGrid(void)
             //             if (bVShared[k])
             //             {
             //                pProfile->AppendPointShared(true);
-            // //                  LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << j << " point " << k << " marked as shared" << endl;
+            // //                  LogStream << m_ulIter << ": profile " << j << " point " << k << " marked as shared" << endl;
             //             }
             //             else
             //             {
             //                pProfile->AppendPointShared(false);
-            // //                  LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " point " << k << " marked as NOT shared" << endl;
+            // //                  LogStream << m_ulIter << ": profile " << nProfile << " point " << k << " marked as NOT shared" << endl;
             //             }
          }
 
@@ -1414,13 +1413,12 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                   pProfile->SetTruncated(true);
 
                if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-                  LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " is invalid, truncated at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
+                  LogStream << m_ulIter << ": profile " << nProfile << " is invalid, truncated at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
 
                break;
             }
 
-            // If this is the first line segment of the profile, then once we are clear of the coastline (say, when m > 1), check if this profile hits land at this interpolated point
-            // TODO 058 Get problems here since if the coastline vector has been heavily smoothed, this can result is 'false positives' profiles marked as invalid which are not actually invalid, because the profile hits land when m = 0 or m = 1. This results in some cells being flagged as profile cells which are actually inland
+            // If this is the first line segment of the profile, then once we are clear of the coastline (say, when m > 1), check if this profile hits land at this interpolated point. NOTE Get problems here since if the coastline vector has been heavily smoothed, this can result is 'false positives' profiles marked as invalid which are not actually invalid, because the profile hits land when m = 0 or m = 1. This results in some cells being flagged as profile cells which are actually inland
             if (((nSeg == 0) && (m > 1)) || (nSeg > 0))
             {
                if (m_pRasterGrid->m_Cell[nX][nY].bIsCoastline())
@@ -1429,8 +1427,8 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                   bHitCoast = true;
                   pProfile->SetHitCoast(true);
 
-                  if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                     LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " is invalid, hit coast at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
+                  if (m_nLogFileDetail >= LOG_FILE_ALL)
+                     LogStream << m_ulIter << ": Profile " << nProfile << " is invalid, hit coast at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
 
                   return;
                }
@@ -1442,8 +1440,8 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                   bHitCoast = true;
                   pProfile->SetHitCoast(true);
 
-                  if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                     LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " is invalid, hit coast at [" << nX << "][" << nY + 1 << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY + 1) << "}" << endl;
+                  if (m_nLogFileDetail >= LOG_FILE_ALL)
+                     LogStream << m_ulIter << ": Profile " << nProfile << " is invalid, hit coast at [" << nX << "][" << nY + 1 << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY + 1) << "}" << endl;
 
                   return;
                }
@@ -1454,7 +1452,7 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                //                   bHitLand = true;
                //                   pProfile->SetHitLand(true);
                //
-               //                   LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " HIT LAND at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}, elevation = " << m_pRasterGrid->m_Cell[nX][nY].dGetSedimentTopElev() << ", SWL = " << m_dThisIterSWL << endl;
+               //                   LogStream << m_ulIter << ": profile " << nProfile << " HIT LAND at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}, elevation = " << m_pRasterGrid->m_Cell[nX][nY].dGetSedimentTopElev() << ", SWL = " << m_dThisIterSWL << endl;
                //
                //                   LogStream << "On [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}, sea depth = " << m_pRasterGrid->m_Cell[nX][nY].dGetSeaDepth() << ", bIsInContiguousSea = " << (m_pRasterGrid->m_Cell[nX][nY].bIsInContiguousSea() ? "true" : "false") << ", landform = " << (m_pRasterGrid->m_Cell[nX][nY].bIsInContiguousSea() ? "sea" : "not sea") << endl;
                //
@@ -1483,8 +1481,8 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                      bHitAnotherProfile = true;
                      pProfile->SetHitAnotherProfile(true);
 
-                     if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                        LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile A1 (" << nHitProfile << ") at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
+                     if (m_nLogFileDetail >= LOG_FILE_ALL)
+                        LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile A1 (" << nHitProfile << ") at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
 
                      return;
                   }
@@ -1511,8 +1509,8 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                      bHitAnotherProfile = true;
                      pProfile->SetHitAnotherProfile(true);
 
-                     if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                        LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile B1 (" << nHitProfile << ") at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
+                     if (m_nLogFileDetail >= LOG_FILE_ALL)
+                        LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile B1 (" << nHitProfile << ") at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
 
                      return;
                   }
@@ -1542,8 +1540,8 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                      bHitAnotherProfile = true;
                      pProfile->SetHitAnotherProfile(true);
 
-                     if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                        LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile diagonally A2 (" << nHitProfile << ") at [" << nXTmp << "][" << nYTmp << "] = {" << dGridCentroidXToExtCRSX(nXTmp) << ", " << dGridCentroidYToExtCRSY(nYTmp) << "}" << endl;
+                     if (m_nLogFileDetail >= LOG_FILE_ALL)
+                        LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile diagonally A2 (" << nHitProfile << ") at [" << nXTmp << "][" << nYTmp << "] = {" << dGridCentroidXToExtCRSX(nXTmp) << ", " << dGridCentroidYToExtCRSY(nYTmp) << "}" << endl;
 
                      return;
                   }
@@ -1570,8 +1568,8 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
                      bHitAnotherProfile = true;
                      pProfile->SetHitAnotherProfile(true);
 
-                     if (m_nLogFileDetail >= LOG_FILE_HIGH_DETAIL)
-                        LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile diagonally B2 (" << nHitProfile << ") at [" << nXTmp << "][" << nYTmp << "] = {" << dGridCentroidXToExtCRSX(nXTmp) << ", " << dGridCentroidYToExtCRSY(nYTmp) << "}" << endl;
+                     if (m_nLogFileDetail >= LOG_FILE_ALL)
+                        LogStream << m_ulIter << ": coast " << nCoast << ", profile " << nProfile << " is invalid, crosses another profile diagonally B2 (" << nHitProfile << ") at [" << nXTmp << "][" << nYTmp << "] = {" << dGridCentroidXToExtCRSX(nXTmp) << ", " << dGridCentroidYToExtCRSY(nYTmp) << "}" << endl;
 
                      return;
                   }
@@ -1616,7 +1614,7 @@ void CSimulation::RasterizeProfile(int const nCoast, int const nProfile, vector<
       if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
       {
          // Ignore CPPCheck errors here, since we know that pVIPointsOut is not empty
-         LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): profile " << nProfile << " is invalid, is too short, only " << pVIPointsOut->size() << " points, HitLand?" << bHitLand << ". From [" << pVIPointsOut->at(0).nGetX() << "][" << pVIPointsOut->at(0).nGetY() << "] = {" << dGridCentroidXToExtCRSX(pVIPointsOut->at(0).nGetX()) << ", " << dGridCentroidYToExtCRSY(pVIPointsOut->at(0).nGetY()) << "} to [" << pVIPointsOut->at(pVIPointsOut->size() - 1).nGetX() << "][" << pVIPointsOut->at(pVIPointsOut->size() - 1).nGetY() << "] = {" << dGridCentroidXToExtCRSX(pVIPointsOut->at(pVIPointsOut->size() - 1).nGetX()) << ", " << dGridCentroidYToExtCRSY(pVIPointsOut->at(pVIPointsOut->size() - 1).nGetY()) << "}" << endl;
+         LogStream << m_ulIter << ": profile " << nProfile << " is invalid, is too short, only " << pVIPointsOut->size() << " points, HitLand?" << bHitLand << ". From [" << pVIPointsOut->at(0).nGetX() << "][" << pVIPointsOut->at(0).nGetY() << "] = {" << dGridCentroidXToExtCRSX(pVIPointsOut->at(0).nGetX()) << ", " << dGridCentroidYToExtCRSY(pVIPointsOut->at(0).nGetY()) << "} to [" << pVIPointsOut->at(pVIPointsOut->size() - 1).nGetX() << "][" << pVIPointsOut->at(pVIPointsOut->size() - 1).nGetY() << "] = {" << dGridCentroidXToExtCRSX(pVIPointsOut->at(pVIPointsOut->size() - 1).nGetX()) << ", " << dGridCentroidYToExtCRSY(pVIPointsOut->at(pVIPointsOut->size() - 1).nGetY()) << "}" << endl;
       }
    }
 }
@@ -1690,7 +1688,7 @@ void CSimulation::MergeProfilesAtFinalLineSegments(int const nCoast, int const n
        nNumFirstProfileCoincidentProfilesLastSeg = static_cast<int>(prVFirstProfileCoincidentProfilesLastSeg.size()),
        nNumSecondProfileCoincidentProfilesLastSeg = static_cast<int>(prVSecondProfileCoincidentProfilesLastSeg.size());
 
-   //   LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): END-SEGMENT INTERSECTION between profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} at line segment " << nFirstProfileLineSegments-1 << "/" << nFirstProfileLineSegments-1 << ", and line segment " << nSecondProfileLineSegments-1 << "/" << nSecondProfileLineSegments-1 << ", respectively. Both truncated at [" << dIntersectX << ", " << dIntersectY << "] then profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} extended to [" << dAvgEndX << ", " << dAvgEndY << "]" << endl;
+   //   LogStream << m_ulIter << ": END-SEGMENT INTERSECTION between profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} at line segment " << nFirstProfileLineSegments-1 << "/" << nFirstProfileLineSegments-1 << ", and line segment " << nSecondProfileLineSegments-1 << "/" << nSecondProfileLineSegments-1 << ", respectively. Both truncated at [" << dIntersectX << ", " << dIntersectY << "] then profiles {" << nFirstProfile << "} and {" << nSecondProfile << "} extended to [" << dAvgEndX << ", " << dAvgEndY << "]" << endl;
 
    // Truncate the first profile, and all co-incident profiles, at the point of intersection
    for (int n = 0; n < nNumFirstProfileCoincidentProfilesLastSeg; n++)
@@ -1699,7 +1697,7 @@ void CSimulation::MergeProfilesAtFinalLineSegments(int const nCoast, int const n
       CGeomProfile* pThisProfile = m_VCoast[nCoast].pGetProfile(nThisProfile);
       int nProfileLength = pThisProfile->nGetProfileSize();
 
-      // TODO 058 this is the final line segment of the first 'main' profile. We are assuming that it is also the final line segment of all co-incident profiles. This is fine, altho' each profile may well have a different number of line segments landwards i.e. the number of the line segment may be different for each co-incident profile
+      // This is the final line segment of the first 'main' profile. We are assuming that it is also the final line segment of all co-incident profiles. This is fine, altho' each profile may well have a different number of line segments landwards i.e. the number of the line segment may be different for each co-incident profile
       pThisProfile->SetPointInProfile(nProfileLength - 1, dIntersectX, dIntersectY);
    }
 
@@ -1710,7 +1708,7 @@ void CSimulation::MergeProfilesAtFinalLineSegments(int const nCoast, int const n
       CGeomProfile* pThisProfile = m_VCoast[nCoast].pGetProfile(nThisProfile);
       int nProfileLength = pThisProfile->nGetProfileSize();
 
-      // TODO 058 this is the final line segment of the second 'main' profile. We are assuming that it is also the final line segment of all co-incident profiles. This is fine, altho' each profile may well have a different number of line segments landwards i.e. the number of the line segment may be different for each co-incident profile
+      // This is the final line segment of the second 'main' profile. We are assuming that it is also the final line segment of all co-incident profiles. This is fine, altho' each profile may well have a different number of line segments landwards i.e. the number of the line segment may be different for each co-incident profile
       pThisProfile->SetPointInProfile(nProfileLength - 1, dIntersectX, dIntersectY);
    }
 
@@ -1778,7 +1776,7 @@ void CSimulation::TruncateOneProfileRetainOtherProfile(int const nCoast, int con
    int nRet = nInsertPointIntoProfilesIfNeededThenUpdate(nCoast, nProfileToRetain, dIntersectX, dIntersectY, nProfileToRetainIntersectLineSeg, nProfileToTruncate, nProfileToTruncateIntersectLineSeg, bAlreadyPresent);
    if (nRet != RTN_OK)
    {
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): error in nInsertPointIntoProfilesIfNeededThenUpdate()" << endl;
+      LogStream << m_ulIter << ": error in nInsertPointIntoProfilesIfNeededThenUpdate()" << endl;
       return;
    }
 
@@ -1841,7 +1839,7 @@ int CSimulation::nInsertPointIntoProfilesIfNeededThenUpdate(int const nCoast, in
    //             Pt2 = *m_VCoast[nCoast].pGetProfile(nThisProfile)->pPtGetPointInProfile(nPoint+1);
    //
    //          if (Pt1 == Pt2)
-   //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
+   //             LogStream << m_ulIter << ": IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
    //       }
    //    }
    //    // Get the index numbers of all coincident profiles for the 'main' to-truncate profile for the line segment in which intersection occurred
@@ -1871,7 +1869,7 @@ int CSimulation::nInsertPointIntoProfilesIfNeededThenUpdate(int const nCoast, in
    //             Pt2 = *m_VCoast[nCoast].pGetProfile(nThisProfile)->pPtGetPointInProfile(nPoint+1);
    //
    //          if (Pt1 == Pt2)
-   //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
+   //             LogStream << m_ulIter << ": IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
    //       }
    //    }
    // END: FOR CHECKING PURPOSES ******************************************************************
@@ -1978,7 +1976,7 @@ int CSimulation::nInsertPointIntoProfilesIfNeededThenUpdate(int const nCoast, in
    //             Pt2 = *m_VCoast[nCoast].pGetProfile(nThisProfile)->pPtGetPointInProfile(nPoint+1);
    //
    //          if (Pt1 == Pt2)
-   //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
+   //             LogStream << m_ulIter << ": IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
    //       }
    //    }
    // END: FOR CHECKING PURPOSES ******************************************************************
@@ -2021,7 +2019,7 @@ void CSimulation::TruncateProfileAndAppendNew(int const nCoast, int const nMainP
    //             Pt2 = *m_VCoast[nCoast].pGetProfile(nThisProfile)->pPtGetPointInProfile(nPoint+1);
    //
    //          if (Pt1 == Pt2)
-   //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
+   //             LogStream << m_ulIter << ": IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
    //       }
    //    }
    //    LogStream << "\tPart-profile to append is ";
@@ -2140,7 +2138,7 @@ void CSimulation::TruncateProfileAndAppendNew(int const nCoast, int const nMainP
    //             Pt2 = *m_VCoast[nCoast].pGetProfile(nThisProfile)->pPtGetPointInProfile(nPoint+1);
    //
    //          if (Pt1 == Pt2)
-   //             LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
+   //             LogStream << m_ulIter << ": IDENTICAL POINTS before changes, in profile {" << nThisProfile << "} points = " << nPoint << " and " << nPoint+1 << endl;
    //       }
    //    }
    // END: FOR CHECKING PURPOSES ******************************************************************

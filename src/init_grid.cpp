@@ -89,7 +89,7 @@ int CSimulation::nInitGridAndCalcStillWaterLevel(void)
    m_dThisIterActualPlatformErosionFineCons =
    m_dThisIterActualPlatformErosionSandCons =
    m_dThisIterActualPlatformErosionCoarseCons =
-   m_dThisIterLeftGridUnconsFine =
+   m_dThisIterLeftGridUnconsFine =                 // TODO 067
    m_dThisIterLeftGridUnconsSand =
    m_dThisIterLeftGridUnconsCoarse =
    m_dThisiterUnconsFineInput =
@@ -107,13 +107,14 @@ int CSimulation::nInitGridAndCalcStillWaterLevel(void)
 
    int nZeroThickness = 0;
    
-   m_dStartIterSuspFine =
-   m_dStartIterUnconsFine =
-   m_dStartIterUnconsSand =
-   m_dStartIterUnconsCoarse =
-   m_dStartIterConsFine =
-   m_dStartIterConsSand =
-   m_dStartIterConsCoarse = 0;
+   m_dStartIterSuspFineAllCells =
+   m_dStartIterSuspFineInPolygons =
+   m_dStartIterUnconsFineAllCells =
+   m_dStartIterUnconsSandAllCells =
+   m_dStartIterUnconsCoarseAllCells =
+   m_dStartIterConsFineAllCells =
+   m_dStartIterConsSandAllCells =
+   m_dStartIterConsCoarseAllCells = 0;
 
    // And go through all cells in the RasterGrid array
    for (int nX = 0; nX < m_nXGridMax; nX++)
@@ -132,21 +133,22 @@ int CSimulation::nInitGridAndCalcStillWaterLevel(void)
                nZeroThickness++;
 
                if (m_nLogFileDetail >= LOG_FILE_MIDDLE_DETAIL)
-                  LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << WARN << "total sediment thickness is " << dSedThickness << " at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
+                  LogStream << m_ulIter << ": " << WARN << "total sediment thickness is " << dSedThickness << " at [" << nX << "][" << nY << "] = {" << dGridCentroidXToExtCRSX(nX) << ", " << dGridCentroidYToExtCRSY(nY) << "}" << endl;
             }
 
             // For the first timestep only, calculate the elevation of all this cell's layers. During the rest of the simulation, each cell's elevation is re-calculated just after any change occurs on that cell
             m_pRasterGrid->m_Cell[nX][nY].CalcAllLayerElevsAndD50();
          }
          
-         m_dStartIterConsFine += m_pRasterGrid->m_Cell[nX][nY].dGetTotConsFineThickConsiderNotch();
-         m_dStartIterConsSand += m_pRasterGrid->m_Cell[nX][nY].dGetTotConsSandThickConsiderNotch();
-         m_dStartIterConsCoarse += m_pRasterGrid->m_Cell[nX][nY].dGetTotConsCoarseThickConsiderNotch();
+         // Note that these totals include sediment which is both within and outside the polygons (because we have not yet defined polygons for this iteration, duh!)
+         m_dStartIterConsFineAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetTotConsFineThickConsiderNotch();
+         m_dStartIterConsSandAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetTotConsSandThickConsiderNotch();
+         m_dStartIterConsCoarseAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetTotConsCoarseThickConsiderNotch();
          
-         m_dStartIterSuspFine += m_pRasterGrid->m_Cell[nX][nY].dGetSuspendedSediment();
-         m_dStartIterUnconsFine += m_pRasterGrid->m_Cell[nX][nY].dGetTotUnconsFineThickness();         
-         m_dStartIterUnconsSand += m_pRasterGrid->m_Cell[nX][nY].dGetTotUnconsSandThickness();         
-         m_dStartIterUnconsCoarse += m_pRasterGrid->m_Cell[nX][nY].dGetTotUnconsCoarseThickness();
+         m_dStartIterSuspFineAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetSuspendedSediment();
+         m_dStartIterUnconsFineAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetTotUnconsFine();
+         m_dStartIterUnconsSandAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetTotUnconsSand();
+         m_dStartIterUnconsCoarseAllCells += m_pRasterGrid->m_Cell[nX][nY].dGetTotUnconsCoarse();
 
          if (m_bSingleDeepWaterWaveValues)
          {
@@ -186,7 +188,7 @@ int CSimulation::nInitGridAndCalcStillWaterLevel(void)
    if (nZeroThickness > 0)
    {
       cerr << m_ulIter << ": " << WARN << nZeroThickness << " cells have no sediment, is this correct?" << endl;
-      LogStream << "Timestep " << m_ulIter << " (" << strDispSimTime(m_dSimElapsed) << "): " << WARN << nZeroThickness << " cells have no sediment, is this correct?" << endl;
+      LogStream << m_ulIter << ": " << WARN << nZeroThickness << " cells have no sediment, is this correct?" << endl;
    }
 
    //    // DEBUG CODE ===========================================

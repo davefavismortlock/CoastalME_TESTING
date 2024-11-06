@@ -140,7 +140,6 @@ int CSimulation::nReadVectorGISFile(int const nDataItem)
                break;
 
             default:
-               // TODO 058 may need wkbMultiLineString or similar for channel network
                nThisGeometry = VEC_GEOMETRY_OTHER;
                strGeometry = "other";
                break;
@@ -1290,10 +1289,10 @@ bool CSimulation::bWriteVectorGISFile(int const nDataItem, string const *strPlot
                // Set the feature's attributes
                pOGRFeature->SetField(strFieldValue1.c_str(), j);
                pOGRFeature->SetField(strFieldValue2.c_str(), pPolygon->nGetNodeCoastPoint());
-               pOGRFeature->SetField(strFieldValue3.c_str(), pPolygon->dGetDepositionAllUncons());
-               pOGRFeature->SetField(strFieldValue4.c_str(), pPolygon->dGetDepositionUnconsFine());
-               pOGRFeature->SetField(strFieldValue5.c_str(), pPolygon->dGetDepositionUnconsSand());
-               pOGRFeature->SetField(strFieldValue6.c_str(), pPolygon->dGetDepositionUnconsCoarse());
+               pOGRFeature->SetField(strFieldValue3.c_str(), pPolygon->dGetBeachDepositionAndSuspensionAllUncons());
+               pOGRFeature->SetField(strFieldValue4.c_str(), pPolygon->dGetSuspensionUnconsFine());
+               pOGRFeature->SetField(strFieldValue5.c_str(), pPolygon->dGetBeachDepositionUnconsSand());
+               pOGRFeature->SetField(strFieldValue6.c_str(), pPolygon->dGetBeachDepositionUnconsCoarse());
 
                // Now attach a geometry to the feature object
                for (int n = 0; n < pPolygon->nGetBoundarySize(); n++)

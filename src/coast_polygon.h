@@ -64,43 +64,58 @@ private:
    //! The number of the vector point from which we start the point-in-polygon search
    int m_nPointInPolygonSearchStartPoint;
       
-   // Note: all sediment depths are in m, and here cover the area of a single raster cell: to convert to a volume, multiply by m_dCellArea
-
    //! The average d50 of unconsolidated sediment on this polygon
    double m_dAvgUnconsD50;
 
-   //! The volume (m3) of seawater within the polygon
+   //! The volume (m3) of sea water within the polygon
    double m_dSeawaterVolume;
 
-   //! Potential (ignoring supply-limitation) erosion (all size classes) as a depth during this timestep (-ve)
-   double m_dPotentialErosionAllUncons;
+   // Note: all sediment depths are in m, and here cover the area of a single raster cell: to convert to a volume, multiply by m_dCellArea
 
-   //! Erosion (considering supply-limitation) of fine-sized sediment as a depth this timestep (-ve)
-   double m_dErosionUnconsFine;
+   //! Potential (ignoring supply-limitation) erosion of unconsolidated sediment (all size classes) as a depth during this timestep (-ve), beach redistribution only
+   double m_dPotentialBeachErosionAllUncons;
 
-   //! Erosion (considering supply-limitation) of sand-sized sediment as a depth this timestep (-ve)
-   double m_dErosionUnconsSand;
+   //! Erosion (considering supply-limitation) of fine-sized unconsolidated sediment as a depth this timestep (-ve), beach redistribution only
+   double m_dBeachErosionUnconsFine;
 
-   //! Erosion (considering supply-limitation) of coarse-sized sediment as a depth this timestep (-ve)
-   double m_dErosionUnconsCoarse;
+   //! Erosion (considering supply-limitation) of sand-sized unconsolidated sediment as a depth this timestep (-ve), beach redistribution only. This includes sand sediment eroded during Dean profile deposition of sand sediment
+   double m_dBeachErosionUnconsSand;
 
-   //! Deposition of fine-sized sediment as a depth this timestep (+ve)
-   double m_dDepositionUnconsFine;
+   //! Erosion (considering supply-limitation) of coarse-sized unconsolidated sediment as a depth this timestep (-ve), beach redistribution only. This includes coarse sediment eroded during Dean profile deposition of coarse sediment
+   double m_dBeachErosionUnconsCoarse;
 
-   //! Deposition of sand-sized sediment as a depth this timestep (+ve)
-   double m_dDepositionUnconsSand;
+   //! Depth of sand-sized unconsolidated sediment deposited on this polygon during this timestep (+ve, beach redistribution only)
+   double m_dBeachDepositionUnconsSand;
 
-   //! Deposition of coarse-sized sediment as a depth this timestep (+ve)
-   double m_dDepositionUnconsCoarse;
+   //! Depth of coarse-sized unconsolidated sediment deposited on this polygon during this timestep (+ve, beach redistribution only)
+   double m_dBeachDepositionUnconsCoarse;
 
-   //! Depth of eroded fine sediment from cliff collapse
+   //! To-suspension movement of fine-sized sediment as a depth this timestep (+ve) ALL PROCESSES TODO *** CHECK *** REPLACE, INSTEAD USE TOTALS FROM TO-SUSPENSION FINE FROM (a) PLATFORM EROSION (b) CLIFF COLLAPSE (c) BEACH EROSION
+   double m_dSuspensionUnconsFine;
+
+   //! Still-to-do depth (m) of sand-sized unconsolidated sediment to be deposited this timestep (+ve), beach redistribution only
+   double m_dToDoBeachDepositionUnconsSand;
+
+   //! Still-to-do depth (m) of coarse-sized unconsolidated sediment to be deposited this timestep (+ve), beach redistribution only
+   double m_dToDoBeachDepositionUnconsCoarse;
+
+   //! Depth of sand unconsolidated sediment eroded during beach deposition as a Dean profile
+   double m_dBeachSandErodedDeanProfile;
+
+   //! Depth of coarse unconsolidated sediment eroded during beach deposition as a Dean profile
+   double m_dBeachCoarseErodedDeanProfile;
+
+   //! Depth of eroded fine sediment from cliff collapse (is always equal to m_dCliffCollapseToSuspensionFine)
    double m_dCliffCollapseErosionFine;
 
-   //! Depth of eroded sand sediment from cliff collapse
+   //! Depth of eroded sand sediment from cliff collapse, note that this does not include sand sediment eroded during Dean profile deposition of talus
    double m_dCliffCollapseErosionSand;
 
-   //! Depth of eroded coarse sediment from cliff collapse
+   //! Depth of eroded coarse sediment from cliff collapse, note that this does not include coarse sediment eroded during Dean profile deposition of talus
    double m_dCliffCollapseErosionCoarse;
+
+   //! Depth of unconsolidated fine sediment which goes to suspension from cliff collapse
+   double m_dCliffCollapseTalusFineToSuspension;
 
    //! Depth of unconsolidated sand talus from cliff collapse
    double m_dCliffCollapseTalusSand;
@@ -108,20 +123,38 @@ private:
    //! Depth of unconsolidated coarse talus from cliff collapse
    double m_dCliffCollapseTalusCoarse;
 
+   //! Depth of sand unconsolidated sediment eroded during deposition of cliff collapse talus as a Dean profile
+   double m_dCliffCollapseSandErodedDeanProfile;
+
+   //! Depth of coarse unconsolidated sediment eroded during deposition of cliff collapse talus as a Dean profile
+   double m_dCliffCollapseCoarseErodedDeanProfile;
+
+   //! Depth of fine sediment moved to suspension from shore platform erosion
+   double m_dPlatformErosionToSuspensionFine;
+
    //! Depth of unconsolidated sand sediment from shore platform erosion
-   double m_dSandFromPlatformErosion;
+   double m_dPlatformErosionUnconsSand;
 
    //! Depth of unconsolidated coarse sediment from shore platform erosion
-   double m_dCoarseFromPlatformErosion;
+   double m_dPlatformErosionUnconsCoarse;
 
    //! Depth of pre-existing unconsolidated fine sediment
-   double m_dStoredUnconsFine;
+   double m_dPreExistingUnconsFine;
 
    //! Depth of pre-existing unconsolidated sand sediment
-   double m_dStoredUnconsSand;
+   double m_dPreExistingUnconsSand;
 
    //! Depth of pre-existing unconsolidated coarse sedimet
-   double m_dStoredUnconsCoarse;
+   double m_dPreExistingUnconsCoarse;
+
+   //! Depth of pre-existing consolidated fine sediment
+   double m_dPreExistingConsFine;
+
+   //! Depth of pre-existing consolidated sand sediment
+   double m_dPreExistingConsSand;
+
+   //! Depth of pre-existing consolidated coarse sediment
+   double m_dPreExistingConsCoarse;
 
    //! Co-ordinates of the coast node cell (raster-grid CRS)
    CGeom2DIPoint m_PtiNode;
@@ -183,23 +216,35 @@ public:
    void AddPotentialErosion(double const);
    double dGetPotentialErosion(void) const;
 
-   void SetErosionUnconsFine(double const);
-   double dGetErosionUnconsFine(void) const;
-   void SetErosionUnconsSand(double const);
-   double dGetErosionUnconsSand(void) const;
-   void SetErosionUnconsCoarse(double const);
-   double dGetErosionUnconsCoarse(void) const;
-   double dGetErosionAllUncons(void) const;
+   void SetBeachErosionUnconsFine(double const);
+   double dGetBeachErosionUnconsFine(void) const;
+   void SetBeachErosionUnconsSand(double const);
+   double dGetBeachErosionUnconsSand(void) const;
+   void SetBeachErosionUnconsCoarse(double const);
+   double dGetBeachErosionUnconsCoarse(void) const;
+   double dGeBeachErosionAllUncons(void) const;
 
-   // void SetZeroDepositionUnconsFine(void);
-   double dGetDepositionUnconsFine(void) const;
-   // void SetZeroDepositionUnconsSand(void);
-   void AddDepositionUnconsSand(double const);
-   double dGetDepositionUnconsSand(void) const;
-   // void SetZeroDepositionUnconsCoarse(void);
-   void AddDepositionUnconsCoarse(double const);
-   double dGetDepositionUnconsCoarse(void) const;
-   double dGetDepositionAllUncons(void) const;
+   void SetBeachDepositionUnconsSand(double const);
+   double dGetBeachDepositionUnconsSand(void) const;
+   void SetBeachDepositionUnconsCoarse(double const);
+   double dGetBeachDepositionUnconsCoarse(void) const;
+
+   void AddToSuspensionUnconsFine(double const);
+   // void SetZeroSuspensionUnconsFine(void);
+   double dGetSuspensionUnconsFine(void) const;
+
+   void SetZeroToDoDepositionUnconsSand(void);
+   void AddToDoBeachDepositionUnconsSand(double const);
+   double dGetToDoBeachDepositionUnconsSand(void) const;
+   void SetZeroToDoDepositionUnconsCoarse(void);
+   void AddToDoBeachDepositionUnconsCoarse(double const);
+   double dGetToDoBeachDepositionUnconsCoarse(void) const;
+   double dGetBeachDepositionAndSuspensionAllUncons(void) const;
+
+   void AddBeachSandErodedDeanProfile(double const);
+   double dGetBeachSandErodedDeanProfile(void) const;
+   void AddBeachCoarseErodedDeanProfile(double const);
+   double dGetBeachCoarseErodedDeanProfile(void) const;
 
    void SetUpCoastAdjacentPolygons(vector<int> const*);
    int nGetUpCoastAdjacentPolygon(int const) const;
@@ -232,22 +277,40 @@ public:
    void AddCliffCollapseErosionCoarse(double const);
    double dGetCliffCollapseErosionCoarse(void) const;   
    
+   void AddCliffCollapseToSuspensionFine(double const);
+   double dGetCliffCollapseToSuspensionFine(void) const;
    void AddCliffCollapseUnconsSandDeposition(double const);
    double dGetCliffCollapseUnconsSandDeposition(void) const;
    void AddCliffCollapseUnconsCoarseDeposition(double const);
    double dGetCliffCollapseUnconsCoarseDeposition(void) const;   
+
+   void AddCliffCollapseFineErodedDeanProfile(double const);
+   double dGetCliffCollapseFineErodedDeanProfile(void) const;
+   void AddCliffCollapseSandErodedDeanProfile(double const);
+   double dGetCliffCollapseSandErodedDeanProfile(void) const;
+   void AddCliffCollapseCoarseErodedDeanProfile(double const);
+   double dGetCliffCollapseCoarseErodedDeanProfile(void) const;
    
-   void AddUnconsSandFromShorePlatform(double const);
-   double dGetUnconsSandFromShorePlatform(void) const;
-   void AddUnconsCoarseFromShorePlatform(double const);
-   double dGetUnconsCoarseFromShorePlatform(void) const;   
+   void AddPlatformErosionToSuspensionUnconsFine(double const);
+   double dGetPlatformErosionToSuspensionUnconsFine(void) const;
+   void AddPlatformErosionUnconsSand(double const);
+   double dGetPlatformErosionUnconsSand(void) const;
+   void AddPlatformErosionUnconsCoarse(double const);
+   double dGetPlatformErosionUnconsCoarse(void) const;
    
-   void SetStoredUnconsFine(double const);
-   double dGetStoredUnconsFine(void) const;
-   void SetStoredUnconsSand(double const);
-   double dGetStoredUnconsSand(void) const;
-   void SetStoredUnconsCoarse(double const);
-   double dGetStoredUnconsCoarse(void) const;
+   void SetPreExistingUnconsFine(double const);
+   double dGetPreExistingUnconsFine(void) const;
+   void SetPreExistingUnconsSand(double const);
+   double dGetPreExistingUnconsSand(void) const;
+   void SetPreExistingUnconsCoarse(double const);
+   double dGetPreExistingUnconsCoarse(void) const;
+
+   void SetPreExistingConsFine(double const);
+   double dGetPreExistingConsFine(void) const;
+   void SetPreExistingConsSand(double const);
+   double dGetPreExistingConsSand(void) const;
+   void SetPreExistingConsCoarse(double const);
+   double dGetPreExistingConsCoarse(void) const;
 };
 #endif //COASTPOLYGON_H
 

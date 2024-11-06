@@ -18,9 +18,10 @@ subroutine CShore(NRET)
    implicit integer (I-N)
    implicit double precision (A-H, O-Z)   
   
-#if ! defined EXE || defined FILEINOUT
-   integer, intent(inout) :: NRET
-#endif
+!#if ! defined EXE || defined FILEINOUT
+!   integer, parameter, intent(inout) :: NRET
+   integer :: NRET
+!#endif
 
    ! For iteration convergence, MAXITE is maximum number of iterations (DFM originally set to 20)
    integer, parameter :: MAXITE = 40
