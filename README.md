@@ -49,7 +49,7 @@ Then move to the the src folder Then run run_cmake.sh.
 cd CoastalME/src
 ./run_cmake.sh
 ```
-If you get the Permission denied message `-bash: ./run_cmake.sh: Permission denied` you will have to grant permission using `chmod 777 run_cmake.sh` and then `./run_cmake.sh`
+If you get the Permission denied message `-bash: ./run_cmake.sh: Permission denied` you will have to grant permission using `chmod a+x run_cmake.sh`, `chmod a+x cshore/make_cshore.sh` and then `./run_cmake.sh`
 
 If you see error messages re. missing software (for example, telling you that CMake cannot be found or is too old, or GDAL cannot be found or is too old) then you need to install or update the software that is causing the problem.
 
