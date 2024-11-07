@@ -13,7 +13,7 @@ Minor changes to CoastalME, such as bug fixes, may be made by opening a GitHub p
 
 Major changes should be discussed on the [coastalme-dev emaillist](http://lists.osgeo.org/mailman/listinfo/coastalme-dev) and may require the drafting of a RFC (request for comment) document.
 
-CoastalME's policy on substantial code additions is documented at :ref:`rfc-85`.
+CoastalME's policy on substantial code additions is documented at [rfc_process.md](/development/rfc_process.md).
 
 ## Filing high-quality issue reports
 
@@ -25,7 +25,6 @@ CoastalME's documentation includes C++ [API documentation](https://codedocs.xyz/
 
 To be correctly parsed, the documentation should follow the Doxygen block documentation style (https://doxygen.nl/manual/docblocks.html#specialblock)
 
-.. code-block:: bash
 	/*! \brief Brief description.
 	*         Brief description continued.
 	*

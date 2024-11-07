@@ -41,7 +41,7 @@ CoastalME builds easily using Linux. If you wish to run CoastalME on Windows, th
 Create a local copy of the github repository, for example by downloading a zipfile, then unpacking it or cloning. We suggest unpacking it to something like "/home/YOUR NAME/Projects/CoastalME/", this is your CoastalME folder.
 
 ```
-git clone https://github.com/apayo/CoastalME.git
+git clone https://github.com/apayo/CoastalME
 ```
 
 In a terminal window (i.e. at a command-line prompt) move to the CoastalME folder. 

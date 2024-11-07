@@ -20,26 +20,22 @@ With the CMake build system you can compile and install CoastalME on more or les
 platform. After unpacking the source distribution archive (or cloning the repository)
 step into the source tree:
 
-.. code-block:: bash
-
-    cd CoastalME-{VERSION}
+	cd CoastalME-{VERSION}
 
 Create a build directory and step into it:
 
-.. code-block:: bash
 
-    mkdir build
-    cd build
+	mkdir build
+	cd build
 
 From the build directory you can now configure CMake, build and install the binaries:
 
-.. code-block:: bash
 
-    cmake ..
+	cmake ..
     cmake --build .
     cmake --build . --target install
 
-.. note::
+Note:
 
     For a minimal build, add these options to the initial ``cmake`` command: ``...``.
     To enable specific DEBUG drivers, add ``....`` or ``...``.
