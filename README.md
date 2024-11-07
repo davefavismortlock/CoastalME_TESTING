@@ -1,10 +1,11 @@
+<p align="left">
+  <img src="https://www.osgeo.org/wp-content/uploads/preview_CoastalME_logo_white_740x412_acf_cropped.png" alt="CoastalME logo white background" width="250">
+</p>
+
 # CoastalME
 Version 1.1.22 
 Date 6 Nov 2024
 
-<p align="left">
-  <img src="https://www.osgeo.org/wp-content/uploads/preview_CoastalME_logo_white_740x412_acf_cropped.png" alt="CoastalME logo white background" width="250">
-</p>
 
 ## Table of contents
 
