@@ -12,10 +12,10 @@
 ## User input
 - [] TODO should user input be split in two main files: one for frequently-changed things, one for rarely-changed things? If so, what should go into each file ('testing only' OK, but what else?
 - [] TODO 011 Should this constant be a user input? 
-		https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/cme.h#L600-L602
-		https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/simulation.cpp#L211
-		https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/simulation.cpp#L371
--   TODO 036 Read in changed deep water wave values
+		[1](https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/cme.h#L600-L602)
+		[2](https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/simulation.cpp#L211)
+		[3](https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/simulation.cpp#L371)
+-  TODO 036 [Read in changed deep water wave values](https://github.com/apayo/CoastalME/blob/415c79f0f65fb8a745a7a08a4d6b3c21c2b13e97/src/init_grid.cpp#L177) 
    TODO 030 Do we also need to be able to input landform sub-categories?
    TODO 027 Sort out GDAL problem with raster reference units
    TODO 022 Get intervention update working
