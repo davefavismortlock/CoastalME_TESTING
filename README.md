@@ -22,7 +22,7 @@ CoastalME (Coastal Modelling Environment) is a Free Open Source and Software for
 
 It is an engineering tool for advanced modellers seeking to simulate the interaction of multiple coastal landforms and different types of human interventions.
 
-[Payo et al., (2018)](https://doi.org/10.5194/gmd-11-4317-2018) described in detail the rationale behind CoastalME and demonstrated how it can be used to integrate; the Soft Cliff and Platform Erosion model [SCAPE](http://www.bioone.org/doi/abs/10.2112/JCOASTRES-D-10-00099.1), the Coastal Vector Evolution Model [COVE](http://onlinelibrary.wiley.com/doi/10.1002/2015JF003704/full) and the Cross Shore model [CSHORE](http://ascelibrary.org/doi/10.1061/(ASCE)WW.1943-5460.0000347).
+[Payo et al., (2017)](https://doi.org/10.5194/gmd-10-2715-2017) described in detail the rationale behind CoastalME and demonstrated how it can be used to integrate; the Soft Cliff and Platform Erosion model [SCAPE](http://www.bioone.org/doi/abs/10.2112/JCOASTRES-D-10-00099.1), the Coastal Vector Evolution Model [COVE](http://onlinelibrary.wiley.com/doi/10.1002/2015JF003704/full) and the Cross Shore model [CSHORE](http://ascelibrary.org/doi/10.1061/(ASCE)WW.1943-5460.0000347).
 
 The software is written in C++ following the object oriented paradigm and has been documented using [Doxygen](https://codedocs.xyz/apayo/CoastalME).
 
@@ -81,7 +81,9 @@ Enjoy!
   
   See <a href="https://doi.org/10.5281/zenodo.1418810"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.1418810.svg" alt="DOI"></a> for the first release of the source code.
 
-  Payo, A., Jigena Antelo, B., Hurst, M., Palaseanu-Lovejoy, M., Williams, C., Jenkins, G., Lee, K., Favis-Mortlock, D., Barkwith, A., and Ellis, M. A.: Development of an automatic delineation of cliff top and toe on very irregular planform coastlines (CliffMetrics v1.0), Geosci. Model Dev., 11, 4317–4337, https://doi.org/10.5194/gmd-11-4317-2018, 2018.
+## How to cite
+
+Payo, A., Favis-Mortlock, D., Dickson, M., Hall, J. W., Hurst, M. D., Walkden, M. J. A., Townend, I., Ives, M. C., Nicholls, R. J., and Ellis, M. A.: Coastal Modelling Environment version 1.0: a framework for integrating landform-specific component models in order to simulate decadal to centennial morphological changes on complex coasts, Geosci. Model Dev., 10, 2715–2740, https://doi.org/10.5194/gmd-10-2715-2017, 2017.
 	
 
 
