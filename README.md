@@ -19,7 +19,7 @@ Date 6 Nov 2024
 ## About
 CoastalME (Coastal Modelling Environment) is a Free Open Source and Software for geospatial modelling to simulate decadal and longer coastal morphological changes.
 
-It is an engineering tool for advanced modelers seeking to simulate the interaction of multiple coastal landforms and different types of human interventions.
+It is an engineering tool for advanced modellers seeking to simulate the interaction of multiple coastal landforms and different types of human interventions.
 
 [Payo et al., (2018)](https://doi.org/10.5194/gmd-11-4317-2018) described in detail the rationale behind CoastalME and demonstrated how it can be used to integrate; the Soft Cliff and Platform Erosion model [SCAPE](http://www.bioone.org/doi/abs/10.2112/JCOASTRES-D-10-00099.1), the Coastal Vector Evolution Model [COVE](http://onlinelibrary.wiley.com/doi/10.1002/2015JF003704/full) and the Cross Shore model [CSHORE](http://ascelibrary.org/doi/10.1061/(ASCE)WW.1943-5460.0000347).
 
