@@ -51,3 +51,7 @@ sufficient to delay progress though ultimately a majority of members can pass a 
 Andres Payo is declared initial Chair of the Project Management Committee.
 
 David Favis-Mortlock and Andres Payo are declared to be the founding Project Management Committee. The current membership list can be found on the [COMMUNITY.md](../COMMUNITY.md) page.
+
+## Credits
+
+This section has been largely inspired by https://github.com/OSGeo/gdal
