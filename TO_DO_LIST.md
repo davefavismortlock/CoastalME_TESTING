@@ -1,16 +1,21 @@
 # TO DO LIST
+
+068 is max (hereinafter only using github permalinks to code lines)
+
 ## Table of contents
 - [User input](#user-input)
 - [Error handling](#error-handling)
 - [Theory/Efficiency](#theory-efficiency)
 - [Output](#output)
+- [Completed](#completed)
 
 ## User input
-   TODO should user input be split in two main files: one for frequently-changed things, one for rarely-changed things? If so, what should go into each file ('testing only' OK, but what else?
-
-   TODO 003 Make coastline curvature moving window size a user input *** FIXED in 1.1.22
-   TODO 011 Should this constant be a user input?
-   TODO 036 Read in changed deep water wave values
+- [] TODO should user input be split in two main files: one for frequently-changed things, one for rarely-changed things? If so, what should go into each file ('testing only' OK, but what else?
+- [] TODO 011 Should this constant be a user input? 
+		https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/cme.h#L600-L602
+		https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/simulation.cpp#L211
+		https://github.com/apayo/CoastalME/blob/0492542eb92455bb442ec3f9070fefa4cc0e40ea/src/simulation.cpp#L371
+-   TODO 036 Read in changed deep water wave values
    TODO 030 Do we also need to be able to input landform sub-categories?
    TODO 027 Sort out GDAL problem with raster reference units
    TODO 022 Get intervention update working
@@ -78,4 +83,8 @@
    TODO 062 Show end-of-iteration number of cells with sediment somewhere
    TODO 068 Only show output in log file that is relevant to processes being simulated
 
-   068 is max
+   
+   
+## Completed
+   TODO 003 Make coastline curvature moving window size a user input *** FIXED in 1.1.22
+   
