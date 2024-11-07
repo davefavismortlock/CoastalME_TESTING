@@ -40,20 +40,6 @@ CoastalME builds easily using Linux. If you wish to run CoastalME on Windows, th
 
 Create a local copy of the github repository, for example by downloading a zipfile, then unpacking it or cloning. We suggest unpacking it to something like "/home/YOUR NAME/Projects/CoastalME/", this is your CoastalME folder.
 
-To test that your installation is running OK, you can run a suite of pre defined tests by running the following commands
-
-	chmod a+x run_test_suite.sh
-	./run_test_suite.sh
-
-The `chmod` comand will ensure that you have permission to execute the run_test_suite.sh file.
-
-Once you have CoastalME (CME) up and running, you can reduce the quantity of output (it can be overwhelming!) in several ways. 
-
-* Change "Content of log file" in the main CME input file for any of the test suite runs (the name of this main input file is listed in cme.ini, both are simple text files). If you set "Content of log file" to zero, then CME won't output a log file; setting it to 4 (all output) is really only useful to developers.
-
-* Change "GIS vector files to output" and "GIS vector files to output" in the main CME input file. These are both set to "all" in the test suite files on GitHub. Instead of "all" you can list the space-separated codes for only the output that you want to see. A list of CME GIS output codes is in codes.txt"
-
-
 ```
 git clone https://github.com/apayo/CoastalME
 ```
@@ -74,6 +60,19 @@ Run make install `make install`. This will create an executable file called cme 
 Edit cme.ini to tell CoastalME which input file to read (for example, in/simple_fast/simple_fast.dat)
 
 Run cme `./cme`. Output will appear in the out/ folder.
+
+To test that your installation is running OK, you can run a suite of pre defined tests by running the following commands
+
+	chmod a+x run_test_suite.sh
+	./run_test_suite.sh
+
+The `chmod` comand will ensure that you have permission to execute the run_test_suite.sh file.
+
+Once you have CoastalME (CME) up and running, you can reduce the quantity of output (it can be overwhelming!) in several ways. 
+
+* Change "Content of log file" in the main CME input file for any of the test suite runs (the name of this main input file is listed in cme.ini, both are simple text files). If you set "Content of log file" to zero, then CME won't output a log file; setting it to 4 (all output) is really only useful to developers.
+
+* Change "GIS vector files to output" and "GIS vector files to output" in the main CME input file. These are both set to "all" in the test suite files on GitHub. Instead of "all" you can list the space-separated codes for only the output that you want to see. A list of CME GIS output codes is in codes.txt"
 
 Enjoy!
 
