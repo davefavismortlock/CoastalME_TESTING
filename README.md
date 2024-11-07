@@ -100,4 +100,4 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## Credits
 
-- Lead code developer is [David Favis-Mortlock](https://github.com/davefavismortlock/) 
+Lead code developer is [David Favis-Mortlock](https://github.com/davefavismortlock/) 
