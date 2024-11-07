@@ -14,6 +14,7 @@ Date 6 Nov 2024
 - [How to build from source](#how-to-build-from-source)
 - [How to contribute](#how-to-contribute)
 - [Code of Conduct](#code-of-conduct)
+- [Credits](#credits)
 
 ## About
 CoastalME (Coastal Modelling Environment) is a Free Open Source and Software for geospatial modelling to simulate decadal and longer coastal morphological changes.
@@ -28,7 +29,8 @@ The C++ source code is available for [download](https://github.com/apayo/Coasta
 
 * Main site: https://www.osgeo.org/projects/coastalme/ - Developer docs, links to other resources
 * Wiki site: https://earthwise.bgs.ac.uk/index.php/Category:Coastal_Modeling_Environment - User docs, links to other resources
-* GIT repository: https://github.com/apayo/CoastalME - Master code
+* Master GIT repository: https://github.com/apayo/CoastalME - Master code
+* Testing GIT repository: https://github.com/davefavismortlock/CoastalME_TESTING - Testing code
 * Bug tracker: https://github.com/apayo/CoastalME/issues
 * Mailing list: https://lists.osgeo.org/mailman/listinfo/coastalme-dev (not available yet)
 
@@ -85,3 +87,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 ## Code of Conduct
 
 See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
+
+## Credits
+
+- Lead code developer is [David Favis-Mortlock](https://github.com/davefavismortlock/) 

@@ -9,7 +9,7 @@ The minimum requirements to build CoastalME are:
 - CMake >= 3.16, and an associated build system (make, ninja, Visual Studio, etc.)
 - GDAL >= 2.1 
 - C++11 
-- F77 compiler
+- F2008 compiler
 
 
 CMake (CoastalME versions >= 3.5.0)
