@@ -81,10 +81,6 @@ Enjoy!
   
   See <a href="https://doi.org/10.5281/zenodo.1418810"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.1418810.svg" alt="DOI"></a> for the first release of the source code.
 
-  See https://github.com/apayo/CoastalME for the latest version of the source code.
-
-  See https://earthwise.bgs.ac.uk/index.php/Category:Coastal_Modeling_Environment for dedicated Wiki site.
-
   Payo, A., Jigena Antelo, B., Hurst, M., Palaseanu-Lovejoy, M., Williams, C., Jenkins, G., Lee, K., Favis-Mortlock, D., Barkwith, A., and Ellis, M. A.: Development of an automatic delineation of cliff top and toe on very irregular planform coastlines (CliffMetrics v1.0), Geosci. Model Dev., 11, 4317–4337, https://doi.org/10.5194/gmd-11-4317-2018, 2018.
 	
 
