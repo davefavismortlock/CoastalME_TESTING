@@ -3,8 +3,8 @@
 </p>
 
 # CoastalME
-Version 1.2.0
-Date 6 Nov 2024
+TESTING Version 1.2.1
+Date 8 Nov 2024
 
 By <a href="https://www.bgs.ac.uk/people/payo-garcia-andres/">Andres Payo</a> and <a href="https://en.wikipedia.org/wiki/David_Favis-Mortlock">David Favis-Mortlock</a>, both <a href="https://www.bgs.ac.uk/">British Geological Survey</a>.
 
