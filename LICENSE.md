@@ -7,7 +7,7 @@ for credit requirements for instance.  The contents of this file can be
 displayed from CostalME GitHub Master repository with filename LICENSE.MD
 
 - [CoastalME General](#coastalme-general)
-- [GDAL/OGR General](#gdal-ogr-general)
+- [GDAL-OGR General](#gdal-ogr-general)
 - [CSHORE General](#cshore-general)
 
 
@@ -26,7 +26,7 @@ The text shown below should be added to all source code.
 
 
 
-## GDAL/OGR General
+## GDAL-OGR General
 
 In general GDAL/OGR is licensed under an MIT style license with the
 following terms:
