@@ -105,4 +105,4 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## Credits
 
-Lead code developer and Version Control Administrator is [David Favis-Mortlock](https://github.com/davefavismortlock/) 
+Devised by [Andres Payo] (https://github.com/apayo) and [David Favis-Mortlock](https://github.com/davefavismortlock/). Lead developer and Version Control Administrator is [David Favis-Mortlock](https://github.com/davefavismortlock/) 
