@@ -56,7 +56,6 @@
 -  TODO 023 [Only calculate shore platform erosion if cell is in a polygon](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/do_shore_platform_erosion.cpp#L51)
 -  TODO 024 [Should we calculate platform erosion on a profile that has hit dry land?](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/do_shore_platform_erosion.cpp#L124)
 -  TODO 037 [Need more info on nFindIndex](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/interpolate.cpp#L103-L121)
--  TODO 039 [Rewrite reading of multiple random number seeds](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/read_input.cpp#L535)
 -  TODO 044 [Estuaries :-)](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/simulation.cpp#L933)
 -  TODO 050 Update for recent versions of Windows
 -  TODO 051 [Implement other ways of calculating depth of closure, see TODO 045](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/utils.cpp#L2482-L2493)
@@ -85,4 +84,6 @@
 -  TODO 003 Make coastline curvature moving window size a user input *** FIXED in 1.1.22
 -  TODO 046 Why is cliff collapse eroded during deposition (three size classes) no longer calculated? *** FIXED in 1.1.22
 -  TODO 058 Dave to check this *** FIXED in 1.1.22
+-  TODO 039 [Rewrite reading of multiple random number seeds](https://github.com/apayo/CoastalME/blob/3bf886759d5277e78836ee1082efd4f68b88dd20/src/read_input.cpp#L535) FIXED in 1.2.1 (8 Nov 2024)
+
    
