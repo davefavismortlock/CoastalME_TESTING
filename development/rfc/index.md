@@ -1,4 +1,4 @@
 # RFC Index
-- [RFC 1: Project Management Committee Guidelines](rfc1_pmc.md)
 - [Request For Comments (RFC) process for code changes](../rfc_process.md)
-- Add your new RFC here
+- [RFC 1: Project Management Committee Guidelines](rfc1_pmc.md)
+- [RFC 2: CostalME Committer Guidelines](rfc2_commiters.md)
