@@ -10,12 +10,12 @@ Status: Draft
 
 This document describes how the CoastalME Project Management Committee determines membership, and makes decisions on CoastalME project issues.
 
-In brief the committee votes on proposals on coastalme-dev. Proposals are available for review for at least two days, and a single veto is
+In brief the committee votes on proposals on [CoastalME Discussions](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785). Proposals are available for review for at least two days, and a single veto is
 sufficient to delay progress though ultimately a majority of members can pass a proposal.
 
 ## Detailed Process
 
-1.  Proposals are written up and submitted on the coastalme-dev mailing list for discussion and voting, by any interested party, not just committee members.
+1.  Proposals are written up and submitted on the [CoastalME Discussions](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785) for discussion and voting, by any interested party, not just committee members.
 2.  Proposals need to be available for review for at least two business days before a final decision can be made.
 3.  Respondents may vote "+1" to indicate support for the proposal and a willingness to support implementation.
 4.  Respondents may vote "-1" to veto a proposal, but must provide clear reasoning and alternate approaches to resolving the problem within the two days.

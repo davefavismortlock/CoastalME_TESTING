@@ -1,22 +1,22 @@
 # Community
 
-CoastalME's community interacts through [Mailing List](https://lists.osgeo.org/mailman/listinfo/coastalme-dev), [Master-GitHub](https://github.com/apayo/CoastalME) and [Testing-GitHub](https://github.com/davefavismortlock/CoastalME_TESTING).
+CoastalME's community interacts on GitHub through [CoastalME Discussions](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785), [Master-GitHub](https://github.com/apayo/CoastalME) and [Testing-GitHub](https://github.com/davefavismortlock/CoastalME_TESTING).
 Please feel welcome to ask questions and participate in all of the venues.  The coastalme-dev channel is for general questions, development discussion, and feedback. The `GitHub` communication channel is for development activities, bug reports, and testing. 
+
+We follow the GitHub general guideline on which discussion tool media we use https://docs.github.com/en/get-started/using-github/communicating-on-github#which-discussion-tool-should-i-use
 
 ## Code of Conduct
 
 CoastalME uses a [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md) which governs how we behave in any CoastalME forum or event and whenever we will be judged by our actions. We expect it to be honored by everyone who participates in the CoastalME community formally or informally, or claims any  affiliation with the project.
 
-## Mailing List
+## CoastalME Discussions
 
-Developers and users of CoastalME participate on the CoastalME mailing list. It is OK to ask questions about how to use CoastalME, how to integrate CoastalME into your own software, and report issues that you might have.
-
-http://lists.osgeo.org/mailman/listinfo/coastalme-dev
+Developers and users of CoastalME participate on the [CoastalME Discussions](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785). It is OK to ask questions about how to use CoastalME, how to integrate CoastalME into your own software, and report issues that you might have.
 
 
 ## GitHub
 
-Visit http://github.com/apayo/coastalME to file issues you might be having with the software. GitHub is also where you can obtain a current development version of the software in the `git` revision control system. The CoastalME project is eager to take contributions in all forms, and we welcome those who are willing to roll up their sleeves and start filing tickets, pushing code, generating builds, and answering questions.
+Visit http://github.com/apayo/coastalME/issues to file issues you might be having with the software. GitHub is also where you can obtain a current development version of the software in the `git` revision control system. The CoastalME project is eager to take contributions in all forms, and we welcome those who are willing to roll up their sleeves and start filing tickets, pushing code, generating builds, and answering questions.
 
 
 ## Governance and Community Participation
@@ -44,7 +44,7 @@ As of November 2024 (following the CoastalME 1.2 release) the project has been p
 - Manuel Cobos	       (@xxxx)
 - Wilf Chun			   (@xxxx)
 
-Note that discussion of proposals to the PSC take place on coastalme-dev email list, and input from all subscribers is welcome.
+Note that discussion of proposals to the PSC take place on [CoastalME Discussions](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785), and input from all subscribers is welcome.
 
 
 ## Credits

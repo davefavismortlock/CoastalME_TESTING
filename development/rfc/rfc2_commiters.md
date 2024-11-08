@@ -19,7 +19,7 @@ Permission for SVC commit access shall be provided to new developers
 only if accepted by the CoastalME Project Steering Committee. A proposal
 should be written to the PSC for new committers and voted on normally.
 It is not necessary to write an RFC document for these votes, a proposal
-to gdal-dev is sufficient.
+to [CoastalME Discussions forum](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785) is sufficient.
 
 Removal of SVC commit access should be handled by the same process.
 

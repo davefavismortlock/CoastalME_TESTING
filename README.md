@@ -33,7 +33,8 @@ The C++ source code is available for [download](https://github.com/apayo/Coasta
 * Master GIT repository: https://github.com/apayo/CoastalME - Master code
 * Testing GIT repository: https://github.com/davefavismortlock/CoastalME_TESTING - For the very latest (possibly untested) CoastalME source code. Warning! Use at your own risk!
 * Bug tracker: https://github.com/apayo/CoastalME/issues
-* Mailing list: https://lists.osgeo.org/mailman/listinfo/coastalme-dev (not available yet)
+* [CoastlME Discussions forum](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785) 
+* [Which GiHub-discussion tool should I use?](https://docs.github.com/en/get-started/using-github/communicating-on-github#which-discussion-tool-should-i-use)
 
 ## Quick Start
 
@@ -102,4 +103,4 @@ See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)
 
 ## Credits
 
-Lead code developer is [David Favis-Mortlock](https://github.com/davefavismortlock/) 
+Lead code developer and Version Control Administrator is [David Favis-Mortlock](https://github.com/davefavismortlock/) 

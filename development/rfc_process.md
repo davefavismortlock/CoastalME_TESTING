@@ -38,10 +38,10 @@ Typical sections are:
     and pull request with a candidate implementation
   - Voting history: "TBD" (to be defined), when the RFC is started
 
-- Send an email to the [coastalme-dev mailing list](http://lists.osgeo.org/mailman/listinfo/coastalme-dev) with a title like:
+- Start a discussion on the [CoastalME Discussions forum](https://github.com/apayo/CoastalME/discussions/19#discussion-7445785) with a title like:
   "Call for discussion on RFC {XYZ}: {Description of the RFC in a short sentence}"
   where you point to the pull request. You may get feedback both in the pull
-  request or in the mailing list.
+  request or in the discussion forum.
 
 - Wait for feedback (give readers at least one week, or more if holiday season).
   If it seems positive and reasonable consensus can be reached, you can start
@@ -52,7 +52,7 @@ Typical sections are:
 
 - Once your candidate implementation is representative enough, and you and other
   contributors can have a good confidence that the RFC can be implemented in the
-  way it has been described, send an email to the gdal-dev mailing list with
+  way it has been described, start a discussion with 
   a title like "Motion: adopt RFC {XYZ}: {Description of the RFC in a short sentence}"
   where you point to the pull request.
   All subscribers can vote, but only votes from members of the CoastalME Project
