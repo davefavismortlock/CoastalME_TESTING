@@ -99,7 +99,6 @@ By Blake Morrison (2018). See <a href="https://www.penguin.co.uk/books/419911/sh
    TODO 023 Only calculate shore platform erosion if cell is in a polygon
    TODO 024 Should we calculate platform erosion on a profile that has hit dry land?
    TODO 037 Need more info on nFindIndex()
-   TODO 039 Rewrite reading of multiple random number seeds
    TODO 044 Estuaries :-)
    TODO 050 Update for recent versions of Windows
    TODO 051 Implement other ways of calculating depth of closure, see TODO 045
@@ -113,7 +112,7 @@ By Blake Morrison (2018). See <a href="https://www.penguin.co.uk/books/419911/sh
    TODO 070 Change CShore to use allocatable arrays (https://fortran-lang.org/en/learn/best_practices/allocatable_arrays/) so that profiles can have more than 500 points; make length of profile a user input?
 
    OUTPUT
-   TODO 065 Get GPKG output working: currently get floating point exception on pDriver->Create(). Also seems not to support raster overwrite. Will need to convert float to byte RGBA, see e.g. https://www.gamedev.net/forums/topic/486847-encoding-16-and-32-bit-floating-point-value-into-rgba-byte-texture/ And what about gpkg input?
+   TODO 065 Get GPKG output working: GDAL 3.9.1 does not yet implement this correctly. Currently is OK for vector output (but is very slow), not yet working for raster output
    TODO 063 Add NetCDF support, see https://trac.osgeo.org/gdal/wiki/NetCDF
    TODO 064 Add support for grids that are not oriented N-S and W-E, but are still rectangular (will need to add a transformation in the reading and writing process, the first to bring it to the local base and the second to save it in global coordinates)
    TODO 031 Get raster slice output working with multiple slices
@@ -131,6 +130,8 @@ By Blake Morrison (2018). See <a href="https://www.penguin.co.uk/books/419911/sh
    TODO 003 Make coastline curvature moving window size a user input FIXED in 1.1.22
    TODO 046 Why is cliff collapse eroded during deposition (three size classes) no longer calculated? FIXED IN 1.1.22
    TODO 058 Dave to check this DONE in 1.1.22
+   TODO 039 Rewrite reading of multiple random number seeds DONE in 1.2.0, 8 Nov 2024
+
 */
 
 #ifndef CME_H
@@ -612,7 +613,7 @@ double const CLIFF_COLLAPSE_HEIGHT_INCREMENT = 0.1;      // Increment the fracti
 
 double const DBL_NODATA = -9999;
 
-string const PROGRAM_NAME = "Coastal Modelling Environment (CoastalME) version 1.2.0 (06 Nov 2024)";
+string const PROGRAM_NAME = "Coastal Modelling Environment (CoastalME) version 1.2.1 (08 Nov 2024)";
 string const PROGRAM_NAME_SHORT = "CME";
 string const CME_INI = "cme.ini";
 
