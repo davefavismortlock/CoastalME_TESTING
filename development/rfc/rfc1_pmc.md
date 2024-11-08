@@ -2,7 +2,7 @@
 
 Author: Andres Payo
 
-Contact: agarcia@bgs.ac.uk
+Contact: agarcia at bgs.ac.uk
 
 Status: Draft
 

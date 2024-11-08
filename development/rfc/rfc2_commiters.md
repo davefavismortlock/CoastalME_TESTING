@@ -139,7 +139,7 @@ frequent contributors).
 If the contribution was developed on behalf of an employer (on work
 time, as part of a work project, etc) then it is important that an
 appropriate representative of the employer understand that the code will
-be contributed under the MIT license. The arrangement should be
+be contributed under the GNU license. The arrangement should be
 cleared with an authorized supervisor/manager, etc.
 
 The code should be developed by the contributor, or the code should be
@@ -189,5 +189,5 @@ checking with each person.
 
 --------------
 
--  [COMMITTERS](../COMMITTERS.md)
+-  [COMGNUTERS](../../COMGNUTERS.md)
    
