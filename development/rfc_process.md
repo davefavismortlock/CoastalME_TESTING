@@ -14,7 +14,7 @@ answer is generally "yes".
 
 The RFC process is the following one:
 
-- add a new .rst file in `/development/rfc` with the RFC text,
+- add a new .md file in `/development/rfc` with the RFC text,
   and references it in [index.md](rfc/index.md), and issue
   a pull request.
 
