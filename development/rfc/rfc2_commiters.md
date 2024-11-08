@@ -44,8 +44,8 @@ document.
 Committer Tracking
 ------------------
 
-A list of all project committers will be kept in the main CoastalME/development directory
-(called COMMITTERS) listing for each SVC committer:
+A list of all project committers will be kept in the main CoastalME GitHub directory
+(called [COMMITTERS](../../COMMITERS.md)) listing for each SVC committer:
 
 -  Userid: the id that will appear in the SVC logs for this person.
 -  Full name: the users actual name.
@@ -116,8 +116,8 @@ upstream projects, otherwise they may be lost during a later refresh.
 
 Currently the list of those areas is :
 
--  [GDAL](https://github.com/OSGeo/gdal/)
--  [CSHORE](https://github.com/erdc/cshore)
+-  https://github.com/OSGeo/gdal/
+-  https://github.com/erdc/cshore
 
 Legal
 -----
@@ -160,14 +160,14 @@ repository:
    source, copyright holders, license terms and so forth. This
    information can be in the file headers, but should also be added to
    the project licensing file if not exactly matching normal project
-   licensing (CoastalME/LICENSE.txt).
+   licensing [LICENSE.md](../../LICENSE.md).
 -  Existing copyright headers and license text should never be stripped
    from a file. If a copyright holder wishes to give up copyright they
    must do so in writing to the foundation before copyright messages are
    removed. If license terms are changed it has to be by agreement
    (written in email is ok) of the copyright holders.
 -  Code with licenses requiring credit, or disclosure to users should be
-   added to CoastalME/LICENSE.TXT.
+   added to [LICENSE.md](../../LICENSE.md).
 -  When substantial contributions are added to a file (such as
    substantial patches) the author/contributor should be added to the
    list of copyright holders for the file.
@@ -189,5 +189,5 @@ checking with each person.
 
 --------------
 
--  [COMGNUTERS](../../COMGNUTERS.md)
+-  [COMMITERS](../../COMMITERS.md)
    
